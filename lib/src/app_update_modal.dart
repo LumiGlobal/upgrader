@@ -60,7 +60,6 @@ class _AppUpdateModalState extends State<AppUpdateModal> {
                     child: IconButton(
                       onPressed: () {
                         widget.onClosed!();
-                        Navigator.pop(context);
                       },
                       icon: const Icon(Icons.close, size: 24),
                     ),
