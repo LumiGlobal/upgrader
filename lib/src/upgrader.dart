@@ -4,12 +4,13 @@
 
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upgrader/src/app_theme.dart';
+import 'package:upgrader/src/app_update_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 
@@ -375,7 +376,10 @@ class Upgrader {
   }
 
   /// Only called by [UpgradeAlert].
-  void checkVersion({required BuildContext context}) {
+  void checkVersion({
+    required BuildContext context,
+    required bool isDark,
+  }) {
     if (!_displayed) {
       final shouldDisplay = shouldDisplayUpgrade();
       if (debugLogging) {
@@ -384,14 +388,19 @@ class Upgrader {
       }
       if (shouldDisplay) {
         _displayed = true;
-        Future.delayed(const Duration(milliseconds: 0), () {
-          _showDialog(
+        Future.delayed(
+          const Duration(milliseconds: 0),
+          () {
+            _showDialog(
               context: context,
               title: messages.message(UpgraderMessage.title),
               message: message(),
               releaseNotes: shouldDisplayReleaseNotes() ? _releaseNotes : null,
-              canDismissDialog: canDismissDialog);
-        });
+              canDismissDialog: canDismissDialog,
+              isDark: isDark,
+            );
+          },
+        );
       }
     }
   }
@@ -527,12 +536,14 @@ class Upgrader {
     return code;
   }
 
-  void _showDialog(
-      {required BuildContext context,
-      required String? title,
-      required String message,
-      required String? releaseNotes,
-      required bool canDismissDialog}) {
+  void _showDialog({
+    required BuildContext context,
+    required String? title,
+    required String message,
+    required String? releaseNotes,
+    required bool canDismissDialog,
+    required bool isDark,
+  }) {
     if (debugLogging) {
       print('upgrader: showDialog title: $title');
       print('upgrader: showDialog message: $message');
@@ -546,11 +557,18 @@ class Upgrader {
       barrierDismissible: canDismissDialog,
       context: context,
       builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () async => _shouldPopScope(),
-          child: dialogStyle == UpgradeDialogStyle.material
-              ? _alertDialog(title!, message, releaseNotes, context)
-              : _cupertinoAlertDialog(title!, message, releaseNotes, context),
+        return AppTheme(
+          data:
+              isDark ? AppThemeVariants.darkTheme : AppThemeVariants.lightTheme,
+          child: WillPopScope(
+            onWillPop: () async => _shouldPopScope(),
+            child: AppUpdateModal(
+              message: messages.message,
+              buttonText: messages.message(UpgraderMessage.buttonTitleUpdate)!,
+              onClosed: () => onUserLater(context, true),
+              onUpdateClick: () => onUserUpdated(context, !blocked()),
+            ),
+          ),
         );
       },
     );
@@ -572,104 +590,6 @@ class Upgrader {
     }
 
     return false;
-  }
-
-  AlertDialog _alertDialog(String title, String message, String? releaseNotes,
-      BuildContext context) {
-    Widget? notes;
-    if (releaseNotes != null) {
-      notes = Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(messages.message(UpgraderMessage.releaseNotes)!,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                releaseNotes,
-                maxLines: 15,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ));
-    }
-    return AlertDialog(
-      title: Text(title),
-      content: SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(message),
-          Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Text(messages.message(UpgraderMessage.prompt)!)),
-          if (notes != null) notes,
-        ],
-      )),
-      actions: <Widget>[
-        if (showIgnore)
-          TextButton(
-              child: Text(messages.message(UpgraderMessage.buttonTitleIgnore)!),
-              onPressed: () => onUserIgnored(context, true)),
-        if (showLater)
-          TextButton(
-              child: Text(messages.message(UpgraderMessage.buttonTitleLater)!),
-              onPressed: () => onUserLater(context, true)),
-        TextButton(
-            child: Text(messages.message(UpgraderMessage.buttonTitleUpdate)!),
-            onPressed: () => onUserUpdated(context, !blocked())),
-      ],
-    );
-  }
-
-  CupertinoAlertDialog _cupertinoAlertDialog(String title, String message,
-      String? releaseNotes, BuildContext context) {
-    Widget? notes;
-    if (releaseNotes != null) {
-      notes = Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: Column(
-            children: <Widget>[
-              Text(messages.message(UpgraderMessage.releaseNotes)!,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(
-                releaseNotes,
-                maxLines: 14,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ));
-    }
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Column(
-        // mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(message),
-          Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: Text(messages.message(UpgraderMessage.prompt)!)),
-          if (notes != null) notes,
-        ],
-      ),
-      actions: <Widget>[
-        if (showIgnore)
-          CupertinoDialogAction(
-              child: Text(messages.message(UpgraderMessage.buttonTitleIgnore)!),
-              onPressed: () => onUserIgnored(context, true)),
-        if (showLater)
-          CupertinoDialogAction(
-              child: Text(messages.message(UpgraderMessage.buttonTitleLater)!),
-              onPressed: () => onUserLater(context, true)),
-        CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text(messages.message(UpgraderMessage.buttonTitleUpdate)!),
-            onPressed: () => onUserUpdated(context, !blocked())),
-      ],
-    );
   }
 
   void onUserIgnored(BuildContext context, bool shouldPop) {
@@ -794,7 +714,7 @@ class Upgrader {
       try {
         await launchUrl(Uri.parse(_appStoreListingURL!),
             mode: UpgradeIO.isAndroid
-                ? LaunchMode.externalNonBrowserApplication
+                ? LaunchMode.externalApplication
                 : LaunchMode.platformDefault);
       } catch (e) {
         if (debugLogging) {
