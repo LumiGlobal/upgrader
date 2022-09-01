@@ -111,7 +111,7 @@ class UpgraderMessages {
     String message;
     switch (languageCode) {
       case 'ms':
-        message = messageBody['en']!;
+        message = messageBody['ms']!;
         break;
       case 'zh':
         message = messageBody['zh']!;
