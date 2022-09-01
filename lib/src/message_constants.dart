@@ -1,10 +1,10 @@
 Map<String, String> messageBody = {
   'en':
-      'Kuih is sweet and so is our latest version\nUpdate your app so you can check out these sweeet upgrades:\nSmoother reading experience\nAllow us to optimise new features for you to enjoy\nNew & exciting features',
+      'Kuih is sweet and so is our latest version\nUpdate your app to enjoy these sweet upgrades:\nSmoother reading experience\nNew & exciting features\nBetter app performance',
   'ms':
-      'Kuih is sweet and so is our latest version\nUpdate your app so you can check out these sweeet upgrades:\nSmoother reading experience\nAllow us to optimise new features for you to enjoy\nNew & exciting features',
+      'Makan kuih waktu pagi, versi terbaru Lumi datang lagi\nKemas kini aplikasi anda sekarang untuk menikmati:\nPengalaman membaca yang lebih lancar\nCiri baharu & menarik\nPrestasi aplikasi yang lebih baik',
   'zh':
-      'Kuih is sweet and so is our latest version\nUpdate your app so you can check out these sweeet upgrades:\nSmoother reading experience\nAllow us to optimise new features for you to enjoy\nNew & exciting features',
+      '我们最新的版本和糕点一样甜蜜蜜！\n立即下载享受这些甜头:\n更顺畅的阅读经验\n备受期待的新功能\n更好的 APP 性能',
 };
 
 Map<String, String> messageButtonTitleIgnore = {
