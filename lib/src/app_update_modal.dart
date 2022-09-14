@@ -6,6 +6,7 @@ class AppUpdateModal extends StatefulWidget {
   final String? Function(UpgraderMessage) message;
   final String buttonText;
   final String? releaseNotes;
+  final Function()? onLaunch;
   final Function()? onClosed;
   final Function()? onUpdateClick;
 
@@ -15,6 +16,7 @@ class AppUpdateModal extends StatefulWidget {
     required this.buttonText,
     required this.onClosed,
     required this.onUpdateClick,
+    this.onLaunch,
     this.releaseNotes,
   }) : super(key: key);
 
@@ -31,7 +33,6 @@ class _AppUpdateModalState extends State<AppUpdateModal> {
 
   @override
   void initState() {
-    print(widget.message(UpgraderMessage.body));
     var textElements =
         widget.message(UpgraderMessage.body).toString().split("\n");
     title = textElements[0];
@@ -39,6 +40,10 @@ class _AppUpdateModalState extends State<AppUpdateModal> {
     desc1 = textElements[2];
     desc2 = textElements[3];
     desc3 = textElements[4];
+
+    if (widget.onLaunch != null) {
+      widget.onLaunch!();
+    }
     super.initState();
   }
 
@@ -163,9 +168,12 @@ class _AppUpdateModalState extends State<AppUpdateModal> {
                     },
                     style: ElevatedButton.styleFrom(
                       alignment: AlignmentDirectional.center,
+                      backgroundColor: AppTheme.of(context).primary1,
+                      disabledForegroundColor:
+                          AppTheme.of(context).justWhiteText.withOpacity(0.38),
+                      disabledBackgroundColor:
+                          AppTheme.of(context).justWhiteText.withOpacity(0.12),
                       elevation: 0,
-                      primary: AppTheme.of(context).primary1,
-                      onSurface: AppTheme.of(context).justWhiteText,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 16),
                       shape: RoundedRectangleBorder(

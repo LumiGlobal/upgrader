@@ -379,6 +379,9 @@ class Upgrader {
   void checkVersion({
     required BuildContext context,
     required bool isDark,
+    Function()? onLaunch,
+    Function()? onUpdateClick,
+    Function()? onClosed,
   }) {
     if (!_displayed) {
       final shouldDisplay = shouldDisplayUpgrade();
@@ -398,6 +401,9 @@ class Upgrader {
               releaseNotes: shouldDisplayReleaseNotes() ? _releaseNotes : null,
               canDismissDialog: canDismissDialog,
               isDark: isDark,
+              onLaunch: onLaunch,
+              onUpdateClick: onUpdateClick,
+              onClosed: onClosed,
             );
           },
         );
@@ -543,6 +549,9 @@ class Upgrader {
     required String? releaseNotes,
     required bool canDismissDialog,
     required bool isDark,
+    Function()? onLaunch,
+    Function()? onUpdateClick,
+    Function()? onClosed,
   }) {
     if (debugLogging) {
       print('upgrader: showDialog title: $title');
@@ -563,10 +572,21 @@ class Upgrader {
           child: WillPopScope(
             onWillPop: () async => _shouldPopScope(),
             child: AppUpdateModal(
+              onLaunch: onLaunch,
               message: messages.message,
               buttonText: messages.message(UpgraderMessage.buttonTitleUpdate)!,
-              onClosed: () => onUserLater(context, true),
-              onUpdateClick: () => onUserUpdated(context, !blocked()),
+              onClosed: () {
+                onUserLater(context, true);
+                if (onClosed != null) {
+                  onClosed();
+                }
+              },
+              onUpdateClick: () {
+                onUserUpdated(context, !blocked());
+                if (onUpdateClick != null) {
+                  onUpdateClick();
+                }
+              },
             ),
           ),
         );

@@ -10,14 +10,27 @@ class UpgradeAlert extends UpgradeBase {
   /// The [child] contained by the widget.
   final Widget? child;
 
-  final bool isDark;
+  /// Takes in a boolean to determine color scheme of UI
+  final bool? isDark;
+
+  /// Optional callback during init of UpgradeAlert
+  final Function()? onLaunch;
+
+  /// Optional callback during clicking of update
+  final Function()? onUpdateClick;
+
+  /// Optional callback during clicking close icon
+  final Function()? onClosed;
 
   /// Creates a new [UpgradeAlert].
   UpgradeAlert({
     Key? key,
     Upgrader? upgrader,
-    required this.isDark,
+    this.isDark = false,
     this.child,
+    this.onLaunch,
+    this.onUpdateClick,
+    this.onClosed,
   }) : super(upgrader ?? Upgrader.sharedInstance, key: key);
 
   /// Describes the part of the user interface represented by this widget.
@@ -35,7 +48,10 @@ class UpgradeAlert extends UpgradeBase {
               processed.data!) {
             upgrader.checkVersion(
               context: context,
-              isDark: isDark,
+              isDark: isDark ?? false,
+              onLaunch: onLaunch,
+              onUpdateClick: onUpdateClick,
+              onClosed: onClosed,
             );
           }
           return child ?? Container();
