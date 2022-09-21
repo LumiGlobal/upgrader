@@ -11,7 +11,10 @@ class UpgradeAlert extends UpgradeBase {
   final Widget? child;
 
   /// Takes in a boolean to determine color scheme of UI
-  final bool? isDark;
+  final bool isDark;
+
+  /// Takes in a boolean to determine if is HMS device
+  final bool isHms;
 
   /// Optional callback during init of UpgradeAlert
   final Function()? onLaunch;
@@ -27,6 +30,7 @@ class UpgradeAlert extends UpgradeBase {
     Key? key,
     Upgrader? upgrader,
     this.isDark = false,
+    this.isHms = false,
     this.child,
     this.onLaunch,
     this.onUpdateClick,
@@ -48,10 +52,11 @@ class UpgradeAlert extends UpgradeBase {
               processed.data!) {
             upgrader.checkVersion(
               context: context,
-              isDark: isDark ?? false,
+              isDark: isDark,
               onLaunch: onLaunch,
               onUpdateClick: onUpdateClick,
               onClosed: onClosed,
+              isHms: isHms,
             );
           }
           return child ?? Container();

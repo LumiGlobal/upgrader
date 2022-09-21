@@ -379,6 +379,7 @@ class Upgrader {
   void checkVersion({
     required BuildContext context,
     required bool isDark,
+    bool isHms = false,
     Function()? onLaunch,
     Function()? onUpdateClick,
     Function()? onClosed,
@@ -404,6 +405,7 @@ class Upgrader {
               onLaunch: onLaunch,
               onUpdateClick: onUpdateClick,
               onClosed: onClosed,
+              isHms: isHms,
             );
           },
         );
@@ -552,6 +554,7 @@ class Upgrader {
     Function()? onLaunch,
     Function()? onUpdateClick,
     Function()? onClosed,
+    bool isHms = false,
   }) {
     if (debugLogging) {
       print('upgrader: showDialog title: $title');
@@ -582,6 +585,10 @@ class Upgrader {
                 }
               },
               onUpdateClick: () {
+                if (isHms) {
+                  installAppStoreListingURL(
+                      "https://appgallery.huawei.com/app/C106856271");
+                }
                 onUserUpdated(context, !blocked());
                 if (onUpdateClick != null) {
                   onUpdateClick();
