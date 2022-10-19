@@ -240,6 +240,60 @@ class Upgrader {
     return true;
   }
 
+  Future<bool> lightWeightInitialize() async {
+    if (_packageInfo == null) {
+      _packageInfo = await PackageInfo.fromPlatform();
+      if (debugLogging) {
+        print(
+            'upgrader: package info packageName: ${_packageInfo!.packageName}');
+        print('upgrader: package info appName: ${_packageInfo!.appName}');
+        print('upgrader: package info version: ${_packageInfo!.version}');
+      }
+    }
+
+    await lightWeightUpdateVersionInfo();
+
+    _installedVersion = _packageInfo!.version;
+    return true;
+  }
+
+  Future<bool> lightWeightUpdateVersionInfo() async {
+    if (_packageInfo == null || _packageInfo!.packageName.isEmpty) {
+      return false;
+    }
+
+    // The  country code of the locale, defaulting to `US`.
+    final country = countryCode ?? findCountryCode();
+    if (debugLogging) {
+      print('upgrader: countryCode: $country');
+    }
+
+    // Get Android version from Google Play Store, or
+    // get iOS version from iTunes Store.
+    if (platform == TargetPlatform.android) {
+      await _getAndroidStoreVersion(country: country);
+    } else if (platform == TargetPlatform.iOS) {
+      final iTunes = ITunesSearchAPI();
+      iTunes.client = client;
+      final response = await (iTunes.lookupByBundleId(_packageInfo!.packageName,
+          country: country));
+
+      if (response != null) {
+        _appStoreVersion ??= ITunesResults.version(response);
+        _appStoreListingURL ??= ITunesResults.trackViewUrl(response);
+        _releaseNotes ??= ITunesResults.releaseNotes(response);
+        final mav = ITunesResults.minAppVersion(response);
+        if (mav != null) {
+          minAppVersion = mav.toString();
+          if (debugLogging) {
+            print('upgrader: ITunesResults.minAppVersion: $minAppVersion');
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   Future<bool> _updateVersionInfo() async {
     // If there is an appcast for this platform
     if (_isAppcastThisPlatform()) {
