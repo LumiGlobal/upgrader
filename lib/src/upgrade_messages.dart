@@ -112,6 +112,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messageBody['ms']!;
+        break;
       case 'ar':
         message =
             'نسخة جديدة من {{appName}} متوفرة! النسخة {{currentAppStoreVersion}} متوفرة الآن, أنت تستخدم النسخة {{currentInstalledVersion}}.';
@@ -259,6 +260,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messageButtonTitleIgnore['ms']!;
+        break;
       case 'ar':
         message = 'تجاهل';
         break;
@@ -374,6 +376,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messageButtonTitleLater['ms']!;
+        break;
       case 'ar':
         //only minor change here, removing the character at the left top of the arabic word (لاحقاً)
         // before: message = 'لاحقاً';
@@ -492,6 +495,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messageButtonTitleUpdate['ms']!;
+        break;
       case 'ar':
         message = 'حدث الآن';
         break;
@@ -607,6 +611,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messagePrompt['ms']!;
+        break;
       case 'ar':
         message = 'هل تفضل أن يتم التحديث الآن';
         break;
@@ -799,6 +804,7 @@ class UpgraderMessages {
     switch (languageCode) {
       case 'ms':
         message = messageTitle['ms']!;
+        break;
       case 'ar':
         message = 'هل تريد تحديث التطبيق؟';
         break;
