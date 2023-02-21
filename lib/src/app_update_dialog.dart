@@ -6,7 +6,6 @@ import 'package:upgrader/src/app_theme.dart';
 import 'package:upgrader/upgrader.dart';
 
 class AppUpdateDialog extends StatelessWidget {
-  // final String storeLink;
   final bool isDark;
   final UpgraderMessages messages;
   final String? releaseNotes;
@@ -25,7 +24,6 @@ class AppUpdateDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(messages.message(UpgraderMessage.body));
     return AppTheme(
       data: isDark ? AppThemeVariants.darkTheme : AppThemeVariants.lightTheme,
       child: Platform.isAndroid
