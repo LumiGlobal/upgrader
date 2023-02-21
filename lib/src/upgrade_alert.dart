@@ -13,24 +13,12 @@ class UpgradeAlert extends UpgradeBase {
   /// Boolean value that determines the dialog theme. `false` by default
   final bool isDark;
 
-  /// Optional callback during init of UpgradeAlert
-  final Function()? onLaunch;
-
-  /// Optional callback during clicking of update
-  final Function()? onUpdateClick;
-
-  /// Optional callback during clicking close icon
-  final Function()? onClosed;
-
   /// Creates a new [UpgradeAlert].
   UpgradeAlert({
     Key? key,
     Upgrader? upgrader,
     this.isDark = false,
     this.child,
-    this.onLaunch,
-    this.onUpdateClick,
-    this.onClosed,
   }) : super(upgrader ?? Upgrader.sharedInstance, key: key);
 
   /// Describes the part of the user interface represented by this widget.
