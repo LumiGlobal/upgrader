@@ -9,15 +9,15 @@ class AppUpdateDialog extends StatelessWidget {
   final bool isDark;
   final UpgraderMessages messages;
   final String? releaseNotes;
-  final VoidCallback ignoreCallback;
-  final VoidCallback laterCallback;
+  final VoidCallback? ignoreCallback;
+  final VoidCallback? laterCallback;
   final VoidCallback updateCallback;
   const AppUpdateDialog({
     super.key,
     required this.isDark,
     required this.messages,
-    required this.ignoreCallback,
-    required this.laterCallback,
+    this.ignoreCallback,
+    this.laterCallback,
     required this.updateCallback,
     this.releaseNotes,
   });
@@ -36,10 +36,11 @@ class AppUpdateDialog extends StatelessWidget {
                 releaseNotes: releaseNotes,
               ),
               actions: [
-                CancelButton(
-                  text: messages.message(UpgraderMessage.buttonTitleIgnore)!,
-                  callback: ignoreCallback,
-                ),
+                if (ignoreCallback != null)
+                  CancelButton(
+                    text: messages.message(UpgraderMessage.buttonTitleIgnore)!,
+                    callback: ignoreCallback!,
+                  ),
                 OKButton(
                   text: messages.message(UpgraderMessage.buttonTitleUpdate)!,
                   callback: updateCallback,
@@ -54,10 +55,11 @@ class AppUpdateDialog extends StatelessWidget {
                 text: messages.message(UpgraderMessage.body)!,
               ),
               actions: [
-                CancelButton(
-                  text: messages.message(UpgraderMessage.buttonTitleIgnore)!,
-                  callback: ignoreCallback,
-                ),
+                if (ignoreCallback != null)
+                  CancelButton(
+                    text: messages.message(UpgraderMessage.buttonTitleIgnore)!,
+                    callback: ignoreCallback!,
+                  ),
                 OKButton(
                   text: messages.message(UpgraderMessage.buttonTitleUpdate)!,
                   callback: updateCallback,

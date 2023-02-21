@@ -694,8 +694,9 @@ class Upgrader {
             isDark: isDark,
             messages: messages,
             releaseNotes: releaseNotes,
-            ignoreCallback: () => onUserIgnored(context, true),
-            laterCallback: () => onUserLater(context, true),
+            ignoreCallback:
+                showIgnore ? () => onUserIgnored(context, true) : null,
+            laterCallback: showLater ? () => onUserLater(context, true) : null,
             updateCallback: () => onUserUpdated(context, !blocked()),
           ),
         );
