@@ -10,6 +10,7 @@ class UpgradeAlert extends UpgradeBase {
   /// The [child] contained by the widget.
   final Widget? child;
 
+  /// Boolean value that determines the dialog theme. `false` by default
   final bool isDark;
 
   /// Optional callback during init of UpgradeAlert

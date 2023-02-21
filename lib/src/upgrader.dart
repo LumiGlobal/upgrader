@@ -289,15 +289,18 @@ class Upgrader {
       print('upgrader: countryCode: $country');
     }
 
-    // Get Android version from Google Play Store, or
-    // get iOS version from iTunes Store.
+    // Gets Android version either from Google Play Store or Huawei App Gallery
+    // depending on whether it is a HMS device
+    // Gets iOS version from App Store
+
     if (platform == TargetPlatform.android) {
       final isHms = await _isHmsDevice();
-      // if (isHms) {
-      await _getHmsStoreVersion();
-      // } else {
-      //   await _getAndroidStoreVersion(country: country);
-      // }
+
+      if (isHms) {
+        await _getHmsStoreVersion();
+      } else {
+        await _getAndroidStoreVersion(country: country);
+      }
     } else if (platform == TargetPlatform.iOS) {
       final iTunes = ITunesSearchAPI();
       iTunes.client = client;
