@@ -1,28 +1,25 @@
 Map<String, String> messageBody = {
-  'en':
-      'Kuih is sweet and so is our latest version\nUpdate your app to enjoy these sweet upgrades:\nSmoother reading experience\nNew & exciting features\nBetter app performance',
-  'ms':
-      'Makan kuih waktu pagi, versi terbaru Lumi datang lagi\nKemas kini aplikasi anda sekarang untuk menikmati:\nPengalaman membaca yang lebih lancar\nCiri baharu & menarik\nPrestasi aplikasi yang lebih baik',
-  'zh':
-      '我们最新的版本和糕点一样甜蜜蜜！\n立即下载享受这些甜头:\n更顺畅的阅读经验\n备受期待的新功能\n更好的 APP 性能',
+  'en': 'Install for better performance and new features',
+  'ms': 'Kemas kini untuk prestasi terbaik dan ciri baharu',
+  'zh': '下载以获得更好的性能和新功能',
 };
 
 Map<String, String> messageButtonTitleIgnore = {
-  'en': 'Ignore',
-  'ms': 'Abaikan',
-  'zh': '不理'
+  'en': 'Cancel',
+  'ms': 'Batal',
+  'zh': '取消'
 };
 
 Map<String, String> messageButtonTitleLater = {
   'en': 'Later',
   'ms': 'Kemudian',
-  'zh': '以后',
+  'zh': '让我想想',
 };
 
 Map<String, String> messageButtonTitleUpdate = {
-  'en': 'Update Now',
-  'ms': 'Perbaharui Sekarang',
-  'zh': '更新',
+  'en': 'OK',
+  'ms': 'OK',
+  'zh': '好的',
 };
 
 Map<String, String> messagePrompt = {
@@ -34,11 +31,11 @@ Map<String, String> messagePrompt = {
 Map<String, String> messageReleaseNotes = {
   'en': 'Release Notes',
   'ms': 'Catatan Rilis',
-  'zh': 'Release Notes',
+  'zh': '新功能',
 };
 
 Map<String, String> messageTitle = {
-  'en': 'Update App?',
-  'ms': 'Perbaharui Aplikasi?',
-  'zh': '更新 APP?',
+  'en': 'New Update Available',
+  'ms': 'Versi Terkini Tersedia',
+  'zh': '最新版本可供下载',
 };

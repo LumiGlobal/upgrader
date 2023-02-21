@@ -6,11 +6,12 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upgrader/src/app_theme.dart';
-import 'package:upgrader/src/app_update_modal.dart';
+import 'package:upgrader/src/app_update_dialog.dart';
+import 'package:upgrader/src/hms_search_api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 
@@ -291,7 +292,12 @@ class Upgrader {
     // Get Android version from Google Play Store, or
     // get iOS version from iTunes Store.
     if (platform == TargetPlatform.android) {
-      await _getAndroidStoreVersion(country: country);
+      final isHms = await _isHmsDevice();
+      // if (isHms) {
+      await _getHmsStoreVersion();
+      // } else {
+      //   await _getAndroidStoreVersion(country: country);
+      // }
     } else if (platform == TargetPlatform.iOS) {
       final iTunes = ITunesSearchAPI();
       iTunes.client = client;
@@ -388,6 +394,20 @@ class Upgrader {
     return true;
   }
 
+  Future<bool?> _getHmsStoreVersion() async {
+    final hmsStore = AppGallerySearchAPI();
+    hmsStore.debugEnabled = debugLogging;
+    final response = await hmsStore.getAppGalleryInfo();
+
+    if (response != null) {
+      _appStoreVersion ??= AppGalleryResults.version(response);
+      _releaseNotes ??= AppGalleryResults.releaseNotes(response);
+      _appStoreListingURL ??= AppGalleryResults.listingUrl();
+    }
+
+    return true;
+  }
+
   /// Android info is fetched by parsing the html of the app store page.
   Future<bool?> _getAndroidStoreVersion(
       {String? country, String? language}) async {
@@ -411,6 +431,19 @@ class Upgrader {
     }
 
     return true;
+  }
+
+  Future<bool> _isHmsDevice() async {
+    GooglePlayServicesAvailability availability = await GoogleApiAvailability
+        .instance
+        .checkGooglePlayServicesAvailability();
+    if (platform == TargetPlatform.iOS) {
+      return false;
+    } else if (platform == TargetPlatform.android) {
+      return availability == GooglePlayServicesAvailability.serviceInvalid;
+    } else {
+      return false;
+    }
   }
 
   bool _isAppcastThisPlatform() {
@@ -464,10 +497,6 @@ class Upgrader {
   void checkVersion({
     required BuildContext context,
     required bool isDark,
-    bool isHms = false,
-    Function()? onLaunch,
-    Function()? onUpdateClick,
-    Function()? onClosed,
   }) {
     if (!_displayed) {
       final shouldDisplay = shouldDisplayUpgrade();
@@ -482,15 +511,9 @@ class Upgrader {
           () {
             _showDialog(
               context: context,
-              title: messages.message(UpgraderMessage.title),
-              message: message(),
+              isDark: isDark,
               releaseNotes: shouldDisplayReleaseNotes() ? _releaseNotes : null,
               canDismissDialog: canDismissDialog,
-              isDark: isDark,
-              onLaunch: onLaunch,
-              onUpdateClick: onUpdateClick,
-              onClosed: onClosed,
-              isHms: isHms,
             );
           },
         );
@@ -646,18 +669,11 @@ class Upgrader {
 
   void _showDialog({
     required BuildContext context,
-    required String? title,
-    required String message,
     required String? releaseNotes,
     required bool canDismissDialog,
     required bool isDark,
-    Function()? onLaunch,
-    Function()? onUpdateClick,
-    Function()? onClosed,
-    bool isHms = false,
   }) {
     if (debugLogging) {
-      print('upgrader: showDialog title: $title');
       print('upgrader: showDialog message: $message');
       print('upgrader: showDialog releaseNotes: $releaseNotes');
     }
@@ -669,32 +685,15 @@ class Upgrader {
       barrierDismissible: canDismissDialog,
       context: context,
       builder: (BuildContext context) {
-        return AppTheme(
-          data:
-              isDark ? AppThemeVariants.darkTheme : AppThemeVariants.lightTheme,
-          child: WillPopScope(
-            onWillPop: () async => _shouldPopScope(),
-            child: AppUpdateModal(
-              onLaunch: onLaunch,
-              message: messages.message,
-              buttonText: messages.message(UpgraderMessage.buttonTitleUpdate)!,
-              onClosed: () {
-                onUserLater(context, true);
-                if (onClosed != null) {
-                  onClosed();
-                }
-              },
-              onUpdateClick: () {
-                if (isHms) {
-                  installAppStoreListingURL(
-                      "https://appgallery.huawei.com/app/C106856271");
-                }
-                onUserUpdated(context, !blocked());
-                if (onUpdateClick != null) {
-                  onUpdateClick();
-                }
-              },
-            ),
+        return WillPopScope(
+          onWillPop: () async => _shouldPopScope(),
+          child: AppUpdateDialog(
+            isDark: isDark,
+            messages: messages,
+            releaseNotes: releaseNotes,
+            ignoreCallback: () => onUserIgnored(context, true),
+            laterCallback: () => onUserLater(context, true),
+            updateCallback: () => onUserUpdated(context, !blocked()),
           ),
         );
       },
