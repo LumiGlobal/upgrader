@@ -33,6 +33,7 @@ class AppUpdateDialog extends StatelessWidget {
               ),
               content: UpgraderAlertSubtitle(
                 text: messages.message(UpgraderMessage.body)!,
+                releaseNotes: releaseNotes,
               ),
               actions: [
                 CancelButton(
@@ -89,16 +90,18 @@ class UpgraderAlertTitle extends StatelessWidget {
 
 class UpgraderAlertSubtitle extends StatelessWidget {
   final String text;
+  final String? releaseNotes;
   const UpgraderAlertSubtitle({
     super.key,
     required this.text,
+    this.releaseNotes,
   });
 
   @override
   Widget build(BuildContext context) {
     return Platform.isAndroid
         ? Text(
-            text,
+            releaseNotes != null ? '$text\n\n${releaseNotes!}' : text,
             style: Theme.of(context).textTheme.bodyText1!.copyWith(
                   color: AppTheme.of(context).medium,
                 ),
