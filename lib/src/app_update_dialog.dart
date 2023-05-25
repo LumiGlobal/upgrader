@@ -82,7 +82,7 @@ class UpgraderAlertTitle extends StatelessWidget {
     return Platform.isAndroid
         ? Text(
             text,
-            style: Theme.of(context).textTheme.headline4!.copyWith(
+            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                   fontWeight: FontWeight.w400,
                 ),
           )
@@ -104,7 +104,7 @@ class UpgraderAlertSubtitle extends StatelessWidget {
     return Platform.isAndroid
         ? Text(
             releaseNotes != null ? '$text\n\n${releaseNotes!}' : text,
-            style: Theme.of(context).textTheme.bodyText1!.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: AppTheme.of(context).medium,
                 ),
           )
@@ -128,7 +128,7 @@ class CancelButton extends StatelessWidget {
             onPressed: callback,
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: AppTheme.of(context).lightest,
                   ),
             ),
@@ -156,7 +156,7 @@ class OKButton extends StatelessWidget {
             onPressed: callback,
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodyText1!.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                     color: AppTheme.of(context).primary1,
                     fontWeight: FontWeight.w700,
                   ),

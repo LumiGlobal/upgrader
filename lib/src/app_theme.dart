@@ -18,7 +18,7 @@ class DefaultThemeData {
         elevation: 0,
         iconTheme: IconThemeData(color: themeData.primary4Grey),
         systemOverlayStyle: themeData.overlayStyle,
-        titleTextStyle: textTheme(themeData).headline3,
+        titleTextStyle: textTheme(themeData).displaySmall,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -40,47 +40,47 @@ class DefaultThemeData {
 
   static TextTheme textTheme(AppThemeData themeData) {
     return TextTheme(
-      headline1: GoogleFonts.poppins(
+      displayLarge: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 39.0,
           height: 1.28,
           color: themeData.darkest),
-      headline2: GoogleFonts.poppins(
+      displayMedium: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 31.0,
           height: 1.3,
           color: themeData.darkest),
-      headline3: GoogleFonts.poppins(
+      displaySmall: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 25.0,
           height: 1.2,
           color: themeData.darkest),
-      headline4: GoogleFonts.poppins(
+      headlineMedium: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 20.0,
           height: 1.25,
           color: themeData.darkest),
-      headline5: GoogleFonts.poppins(
+      headlineSmall: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 16.0,
           height: 1.25,
           color: themeData.darkest),
-      headline6: GoogleFonts.poppins(
+      titleLarge: GoogleFonts.poppins(
           fontWeight: FontWeight.w700,
           fontSize: 14.0,
           height: 1.2,
           color: themeData.darkest),
-      bodyText1: GoogleFonts.sen(
+      bodyLarge: GoogleFonts.sen(
           fontWeight: FontWeight.w400,
           fontSize: 16.0,
           height: 1.25,
           color: themeData.darkest),
-      bodyText2: GoogleFonts.sen(
+      bodyMedium: GoogleFonts.sen(
           fontWeight: FontWeight.w400,
           fontSize: 14.0,
           height: 1.15,
           color: themeData.darkest),
-      caption: GoogleFonts.sen(
+      bodySmall: GoogleFonts.sen(
           fontWeight: FontWeight.w400,
           fontSize: 12.0,
           height: 1.33,
