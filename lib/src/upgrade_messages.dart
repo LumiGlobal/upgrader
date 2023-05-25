@@ -2,6 +2,8 @@
  * Copyright (c) 2020-2022 Larry Aasen. All rights reserved.
  */
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:upgrader/src/message_constants.dart';
 
@@ -89,7 +91,7 @@ class UpgraderMessages {
       locale = Localizations.maybeLocaleOf(context);
     } else {
       // Get the system locale
-      locale = ambiguate(WidgetsBinding.instance)!.window.locale;
+      locale = PlatformDispatcher.instance.locale;
     }
     final code = locale == null || locale.languageCode.isEmpty
         ? 'en'
@@ -851,7 +853,7 @@ class UpgraderMessages {
         message = 'Aggiornare l\'applicazione?';
         break;
       case 'ja':
-        message = 'アプリのアップデート?';
+        message = 'アプリのアップデート';
         break;
       case 'kk':
         message = 'Жаңарту керек пе?';

@@ -109,7 +109,10 @@ class Upgrader {
   /// Return false when the default behavior should not execute.
   BoolCallback? onUpdate;
 
-  /// The target platform.
+  /// The [TargetPlatform] that identifies the platform on which the package is
+  /// currently executing. Defaults to [defaultTargetPlatform]. Note that
+  /// [TargetPlatform] does not include web, but includes mobile and desktop.
+  /// This parameter is normally used to change the target platform during testing.
   final TargetPlatform platform;
 
   /// Called when the user taps outside of the dialog and [canDismissDialog]
@@ -126,6 +129,10 @@ class Upgrader {
   /// Hide or show release notes (default: true)
   bool showReleaseNotes;
 
+  /// The text style for the cupertino dialog buttons. Used only for
+  /// [UpgradeDialogStyle.cupertino]. Optional.
+  TextStyle? cupertinoButtonTextStyle;
+
   /// Called when [Upgrader] determines that an upgrade may or may not be
   /// displayed. The [value] parameter will be true when it should be displayed,
   /// and false when it should not be displayed. One good use for this callback
@@ -133,7 +140,7 @@ class Upgrader {
   WillDisplayUpgradeCallback? willDisplayUpgrade;
 
   /// The target operating system.
-  final String operatingSystem = UpgradeIO.operatingSystem;
+  final String _operatingSystem = UpgradeIO.operatingSystem;
 
   bool _displayed = false;
   bool _initCalled = false;
@@ -178,6 +185,7 @@ class Upgrader {
     this.languageCode,
     this.minAppVersion,
     this.dialogStyle = UpgradeDialogStyle.material,
+    this.cupertinoButtonTextStyle,
     TargetPlatform? platform,
   })  : client = client ?? http.Client(),
         messages = messages ?? UpgraderMessages(),
@@ -230,8 +238,9 @@ class Upgrader {
       if (debugLogging) {
         print('upgrader: default operatingSystem: '
             '${UpgradeIO.operatingSystem} ${UpgradeIO.operatingSystemVersion}');
-        print('upgrader: operatingSystem: $operatingSystem');
+        print('upgrader: operatingSystem: $_operatingSystem');
         print('upgrader: platform: $platform');
+        print('upgrader: defaultTargetPlatform: $defaultTargetPlatform');
         print('upgrader: '
             'isAndroid: ${UpgradeIO.isAndroid}, '
             'isIOS: ${UpgradeIO.isIOS}, '
@@ -252,9 +261,9 @@ class Upgrader {
         }
       }
 
-      await _updateVersionInfo();
-
       _installedVersion = _packageInfo!.version;
+
+      await _updateVersionInfo();
 
       return true;
     });
@@ -336,6 +345,9 @@ class Upgrader {
         var count = appcast.items == null ? 0 : appcast.items!.length;
         print('upgrader: appcast item count: $count');
       }
+      final criticalUpdateItem = appcast.bestCriticalItem();
+      final criticalVersion = criticalUpdateItem?.versionString ?? '';
+
       final bestItem = appcast.bestItem();
       if (bestItem != null &&
           bestItem.versionString != null &&
@@ -343,12 +355,23 @@ class Upgrader {
         if (debugLogging) {
           print(
               'upgrader: appcast best item version: ${bestItem.versionString}');
+          print(
+              'upgrader: appcast critical update item version: ${criticalUpdateItem?.versionString}');
         }
+
+        try {
+          if (criticalVersion.isNotEmpty &&
+              Version.parse(_installedVersion!) <
+                  Version.parse(criticalVersion)) {
+            _isCriticalUpdate = true;
+          }
+        } catch (e) {
+          print('upgrader: updateVersionInfo could not parse version info $e');
+          _isCriticalUpdate = false;
+        }
+
         _appStoreVersion ??= bestItem.versionString;
         _appStoreListingURL ??= bestItem.fileURL;
-        if (bestItem.isCriticalUpdate) {
-          _isCriticalUpdate = true;
-        }
         _releaseNotes = bestItem.itemDescription;
       }
     } else {
@@ -461,7 +484,7 @@ class Upgrader {
     // When there are no supported OSes listed, they are all supported.
     var supported = true;
     if (appcastConfig!.supportedOS != null) {
-      supported = appcastConfig!.supportedOS!.contains(operatingSystem);
+      supported = appcastConfig!.supportedOS!.contains(_operatingSystem);
     }
     return supported;
   }
@@ -647,7 +670,7 @@ class Upgrader {
       locale = Localizations.maybeLocaleOf(context);
     } else {
       // Get the system locale
-      locale = ambiguate(WidgetsBinding.instance)!.window.locale;
+      locale = PlatformDispatcher.instance.locale;
     }
     final code = locale == null || locale.countryCode == null
         ? 'US'
@@ -664,7 +687,7 @@ class Upgrader {
       locale = Localizations.maybeLocaleOf(context);
     } else {
       // Get the system locale
-      locale = ambiguate(WidgetsBinding.instance)!.window.locale;
+      locale = PlatformDispatcher.instance.locale;
     }
     final code = locale == null ? 'en' : locale.languageCode;
     return code;
@@ -798,7 +821,7 @@ class Upgrader {
     var prefs = await SharedPreferences.getInstance();
 
     _userIgnoredVersion = _appStoreVersion;
-    await prefs.setString('userIgnoredVersion', _userIgnoredVersion!);
+    await prefs.setString('userIgnoredVersion', _userIgnoredVersion ?? '');
     return true;
   }
 
