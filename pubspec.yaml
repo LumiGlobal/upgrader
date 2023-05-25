@@ -18,7 +18,7 @@ dependencies:
   html: ^0.15.3
 
   # For app_theme.dart
-  google_fonts: ^2.3.1
+  google_fonts: ^4.0.0
 
   # Determine if it is HMS device
   google_api_availability: ^3.0.1
