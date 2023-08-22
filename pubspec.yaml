@@ -18,13 +18,13 @@ dependencies:
   html: ^0.15.3
 
   # For app_theme.dart
-  google_fonts: ^4.0.0
+  google_fonts: ^5.1.0
 
   # Determine if it is HMS device
   google_api_availability: ^5.0.0
 
   # From Dart Team: A composable, Future-based library for making HTTP requests.
-  http: ^0.13.6
+  http: ^1.0.0
 
   # From dart.dev: Platform independent access to information about the current operating system.
   os_detect: ^2.0.1
