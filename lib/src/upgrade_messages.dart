@@ -763,8 +763,14 @@ class UpgraderMessages {
       case 'pt':
         message = 'Novidades';
         break;
+      case 'ru':
+        message = 'Информация о выпуске';
+        break;
       case 'te':
         message = 'విడుదల గమనికలు';
+        break;
+      case 'tr':
+        message = 'Yayın Notları';
         break;
 
       case 'bn':
@@ -781,10 +787,8 @@ class UpgraderMessages {
       case 'nb':
       case 'nl':
       case 'pl':
-      case 'ru':
       case 'sv':
       case 'ta':
-      case 'tr':
       case 'uk':
       case 'vi':
       case 'zh':
