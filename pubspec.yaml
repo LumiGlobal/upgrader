@@ -21,7 +21,7 @@ dependencies:
   google_fonts: ^6.2.1
 
   # Determine if it is HMS device
-  google_api_availability: ^3.0.1
+  google_api_availability: ^5.0.0
 
   # From Dart Team: A composable, Future-based library for making HTTP requests.
   http: '>=0.13.6 <2.0.0'
