@@ -349,5 +349,5 @@ class UpgraderStoreController {
 
   static UpgraderStore onAndroidStore() => UpgraderPlayStore();
   static UpgraderStore onIOSStore() => UpgraderAppStore();
-  static UpgraderStore onHmsStore() => UpgraderAppStore();
+  static UpgraderStore onHmsStore() => UpgraderAppGallery();
 }
