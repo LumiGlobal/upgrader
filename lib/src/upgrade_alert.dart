@@ -6,10 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:upgrader/upgrader.dart';
 
-import 'upgrade_messages.dart';
-import 'upgrade_state.dart';
-import 'upgrader.dart';
-
 /// There are two different dialog styles: Cupertino and Material
 enum UpgradeDialogStyle { cupertino, material }
 

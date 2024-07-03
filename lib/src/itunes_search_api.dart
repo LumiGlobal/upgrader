@@ -265,6 +265,6 @@ extension ITunesResults on ITunesSearchAPI {
       }
     }
 
-    return value?.replaceAll('v', '');
+    return value;
   }
 }

@@ -2,6 +2,8 @@
 
 import 'dart:async';
 
+import 'package:google_api_availability/google_api_availability.dart';
+import 'package:upgrader/src/hms_search_api.dart';
 import 'package:version/version.dart';
 
 import 'appcast.dart';
@@ -147,6 +149,58 @@ class UpgraderPlayStore extends UpgraderStore {
   }
 }
 
+class UpgraderAppGallery extends UpgraderStore {
+  @override
+  Future<UpgraderVersionInfo> getVersionInfo(
+      {required UpgraderState state,
+      required Version installedVersion,
+      required String? country,
+      required String? language}) async {
+    if (state.packageInfo == null) return UpgraderVersionInfo();
+
+    final hmsStore = AppGallerySearchAPI();
+    hmsStore.debugEnabled = state.debugLogging;
+
+    final response = await hmsStore.getAppGalleryInfo();
+
+    String? appStoreListingURL;
+    Version? appStoreVersion;
+    bool? isCriticalUpdate;
+    Version? minAppVersion;
+    String? releaseNotes;
+
+    if (response != null) {
+      final version = AppGalleryResults.version(response);
+
+      try {
+        appStoreVersion = Version.parse(version);
+      } catch (e) {
+        if (state.debugLogging) {
+          print(
+              'upgrader: UpgraderPlayStore.appStoreVersion "$version" exception: $e');
+        }
+      }
+
+      appStoreListingURL = AppGalleryResults.listingUrl();
+      releaseNotes = AppGalleryResults.releaseNotes(response);
+    }
+
+    final versionInfo = UpgraderVersionInfo(
+      installedVersion: installedVersion,
+      appStoreListingURL: appStoreListingURL,
+      appStoreVersion: appStoreVersion,
+      isCriticalUpdate: isCriticalUpdate,
+      minAppVersion: minAppVersion,
+      releaseNotes: releaseNotes,
+    );
+    if (state.debugLogging) {
+      print('upgrader: UpgraderPlayStore: version info: $versionInfo');
+    }
+
+    return versionInfo;
+  }
+}
+
 class UpgraderAppcastStore extends UpgraderStore {
   UpgraderAppcastStore({
     required this.appcastURL,
@@ -239,6 +293,7 @@ class UpgraderStoreController {
   /// Creates a controller that provides the store details for each platform.
   UpgraderStoreController({
     this.onAndroid = onAndroidStore,
+    this.onHms = onHmsStore,
     this.onFuchsia,
     this.oniOS = onIOSStore,
     this.onLinux,
@@ -248,6 +303,7 @@ class UpgraderStoreController {
   });
 
   final UpgraderStore Function()? onAndroid;
+  final UpgraderStore Function()? onHms;
   final UpgraderStore Function()? onFuchsia;
   final UpgraderStore Function()? oniOS;
   final UpgraderStore Function()? onLinux;
@@ -255,10 +311,15 @@ class UpgraderStoreController {
   final UpgraderStore Function()? onWeb;
   final UpgraderStore Function()? onWindows;
 
-  UpgraderStore? getUpgraderStore(UpgraderOS upgraderOS) {
+  Future<UpgraderStore?> getUpgraderStore(UpgraderOS upgraderOS) async {
     switch (upgraderOS.currentOSType) {
       case UpgraderOSType.android:
-        return onAndroid?.call();
+        if (await _isHmsDevice()) {
+          return onHms?.call();
+        } else {
+          return onAndroid?.call();
+        }
+
       case UpgraderOSType.fuchsia:
         return onFuchsia?.call();
       case UpgraderOSType.ios:
@@ -274,6 +335,19 @@ class UpgraderStoreController {
     }
   }
 
+  Future<bool> _isHmsDevice() async {
+    try {
+      GooglePlayServicesAvailability availability = await GoogleApiAvailability
+          .instance
+          .checkGooglePlayServicesAvailability();
+
+      return availability == GooglePlayServicesAvailability.serviceInvalid;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static UpgraderStore onAndroidStore() => UpgraderPlayStore();
   static UpgraderStore onIOSStore() => UpgraderAppStore();
+  static UpgraderStore onHmsStore() => UpgraderAppStore();
 }

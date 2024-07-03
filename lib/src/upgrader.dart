@@ -1,15 +1,12 @@
 // Copyright (c) 2018-2024 Larry Aasen. All rights reserved.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:google_api_availability/google_api_availability.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upgrader/src/hms_search_api.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 
@@ -214,7 +211,7 @@ class Upgrader with WidgetsBindingObserver {
     }
 
     // Determine the store to be used for this app.
-    final store = storeController.getUpgraderStore(state.upgraderOS);
+    final store = await storeController.getUpgraderStore(state.upgraderOS);
     if (store == null) {
       if (state.debugLogging) {
         print('upgrader: updateVersionInfo found no store controller');
