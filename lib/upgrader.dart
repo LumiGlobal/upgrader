@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2023 Larry Aasen. All rights reserved.
+ * Copyright (c) 2018-2024 Larry Aasen. All rights reserved.
  */
 
 library upgrader;
@@ -13,5 +13,8 @@ export 'src/upgrade_card.dart';
 export 'src/upgrade_device.dart';
 export 'src/upgrade_messages.dart';
 export 'src/upgrade_os.dart';
+export 'src/upgrade_state.dart';
+export 'src/upgrade_store_controller.dart';
 export 'src/upgrader.dart';
 export 'src/app_update_dialog.dart';
+export 'src/upgrader_version_info.dart';

@@ -122,6 +122,7 @@ Map _androidInfo({required String baseOS}) {
     'systemFeatures': [],
     'displayMetrics': displayMetrics,
     'serialNumber': 'a',
+    'isLowRamDevice': false,
     'version': version,
   };
   return build;
@@ -140,7 +141,7 @@ Map _iosInfo({required String baseOS}) {
     'model': 'model',
     'utsname': iosUtsnameMap,
     'systemName': 'systemName',
-    'isPhysicalDevice': 'false',
+    'isPhysicalDevice': false,
     'systemVersion': baseOS,
     'localizedModel': 'localizedModel',
     'identifierForVendor': 'identifierForVendor',

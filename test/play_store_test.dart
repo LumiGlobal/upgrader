@@ -47,8 +47,10 @@ void main() {
   }, skip: false);
 
   test('testing lookupById', () async {
-    final client = await MockPlayStoreSearchClient.setupMockClient();
-    final playStore = PlayStoreSearchAPI(client: client);
+    final client = await MockPlayStoreSearchClient.setupMockClient(
+        verifyHeaders: {'header1': 'value1'});
+    final playStore = PlayStoreSearchAPI(
+        client: client, clientHeaders: {'header1': 'value1'});
     expect(() async => await playStore.lookupById(''), throwsAssertionError);
 
     final response = await playStore.lookupById('com.kotoko.express');
@@ -127,6 +129,42 @@ void main() {
     expect(await playStore.lookupById('com.not.a.valid.application'), isNull);
   }, skip: false);
 
+  test(
+      'testing lookupById with redesignedVersion title with special characters',
+      () async {
+    final client = await MockPlayStoreSearchClient.setupMockClient();
+    final playStore = PlayStoreSearchAPI(client: client);
+
+    final response = await playStore.lookupById('com.testing.test8');
+    expect(response, isNotNull);
+    expect(response, isInstanceOf<Document>());
+
+    expect(
+        playStore.releaseNotes(response!), 'Minor updates and improvements.');
+    expect(playStore.version(response), '2.3.0');
+    expect(playStore.description(response)?.length, greaterThan(10));
+    expect(
+        pmav(response,
+            tagRES:
+                r'\[\Minimum supported app version\:[\s]*(?<version>[^\s]+)[\s]*\]'),
+        '2.0.0');
+
+    expect(await playStore.lookupById('com.not.a.valid.application'), isNull);
+  }, skip: false);
+
+  test('testing lookupById with invalid version', () async {
+    final client = await MockPlayStoreSearchClient.setupMockClient();
+    final playStore = PlayStoreSearchAPI(client: client);
+
+    final response = await playStore.lookupById('com.testing.test7');
+    expect(response, isNotNull);
+    expect(response, isInstanceOf<Document>());
+
+    expect(
+        playStore.releaseNotes(response!), 'Minor updates and improvements.');
+    expect(playStore.version(response), isNull);
+  }, skip: false);
+
   test('testing release notes', () async {
     final client = await MockPlayStoreSearchClient.setupMockClient();
     final playStore = PlayStoreSearchAPI(client: client);
@@ -169,6 +207,16 @@ void main() {
     expect(playStore.description(response)?.length, greaterThan(10));
   }, skip: false);
 
+  test('testing invalid store version', () async {
+    final client = await MockPlayStoreSearchClient.setupMockClient();
+    final playStore = PlayStoreSearchAPI(client: client);
+
+    final response = await playStore.lookupById('com.testing.test6');
+    expect(response, isNotNull);
+    expect(response, isInstanceOf<Document>());
+    expect(playStore.version(response!), isNull);
+  }, skip: false);
+
   /// Helper method
   Document resDesc(String description) {
     final html =
@@ -201,5 +249,11 @@ void main() {
             tagRES:
                 r'\[\Minimum supported app version\:[\s]*(?<version>[^\s]+)[\s]*\]'),
         '4.5.6+1');
+  });
+
+  test('testing special characters', () async {
+    const msg = 'McDonald\u0027s';
+    expect(msg.replaceAll(r"\u0027", "'"), 'McDonald\'s');
+    expect(msg.replaceAll(r"\u0027", '\''), 'McDonald\'s');
   });
 }

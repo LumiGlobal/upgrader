@@ -39,9 +39,11 @@ void main() {
   });
 
   test('testing lookupByBundleId', () async {
-    final client = MockITunesSearchClient.setupMockClient();
+    final client = MockITunesSearchClient.setupMockClient(
+        verifyHeaders: {'header1': 'value1'});
     final iTunes = ITunesSearchAPI();
     iTunes.client = client;
+    iTunes.clientHeaders = {'header1': 'value1'};
 
     final response =
         await iTunes.lookupByBundleId('com.google.Maps', useCacheBuster: false);
@@ -65,10 +67,7 @@ void main() {
 
     final response = await iTunes.lookupByBundleId('com.google.MyApp',
         useCacheBuster: false);
-    expect(response, isInstanceOf<Map>());
-    final results = response!['results'];
-    expect(results, isNotNull);
-    expect(results.length, 0);
+    expect(response, isNull);
   }, skip: false);
 
   test('testing lookupById', () async {
