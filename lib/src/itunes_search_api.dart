@@ -258,6 +258,7 @@ extension ITunesResults on ITunesSearchAPI {
         print('upgrader.ITunesResults.version: $e');
       }
     }
-    return value;
+
+    return value?.replaceAll('v', '');
   }
 }
