@@ -2,7 +2,6 @@
  * Copyright (c) 2021 Larry Aasen. All rights reserved.
  */
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AlertStyleWidget extends StatelessWidget {
@@ -34,11 +33,11 @@ class AlertStyleWidget extends StatelessWidget {
   final Widget? title;
 
   const AlertStyleWidget({
-    Key? key,
+    super.key,
     required this.content,
     required this.actions,
     this.title,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,22 +55,19 @@ class AlertStyleWidget extends StatelessWidget {
         padding:
             titlePadding ?? const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0),
         child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.headline6!,
-          child: Semantics(child: title, namesRoute: true),
+          style: Theme.of(context).textTheme.titleLarge!,
+          child: Semantics(namesRoute: true, child: title),
         ),
       ));
     } else {
-      if (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.fuchsia) {
-        label = MaterialLocalizations.of(context).alertDialogLabel;
-      }
+      label = 'Alert';
     }
 
     children.add(Flexible(
       child: Padding(
         padding: contentPadding,
         child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.subtitle1!,
+          style: Theme.of(context).textTheme.titleMedium!,
           child: content,
         ),
       ),

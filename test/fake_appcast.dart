@@ -5,15 +5,27 @@ import 'dart:io';
 
 import 'package:mockito/mockito.dart';
 import 'package:upgrader/src/appcast.dart';
-import 'package:upgrader/src/upgrader.dart';
+import 'package:upgrader/src/upgrade_device.dart';
 
 import 'appcast_test.dart';
 
 class FakeAppcast extends Fake implements TestAppcast {
+  FakeAppcast();
   int callCount = 0;
 
   @override
   AppcastItem bestItem() {
+    callCount++;
+
+    return AppcastItem(
+      versionString: '1.0.0',
+      fileURL: 'http://some.fakewebsite.com',
+      tags: [],
+    );
+  }
+
+  @override
+  AppcastItem? bestCriticalItem() {
     callCount++;
 
     return AppcastItem(
@@ -44,15 +56,19 @@ class FakeAppcast extends Fake implements TestAppcast {
     return [AppcastItem()];
   }
 
-  AppcastConfiguration config =
-      AppcastConfiguration(url: 'http://some.fakewebsite.com', supportedOS: [
-    'linux',
-    'macos',
-    'windows',
-    'android',
-    'ios',
-    'fuchsia',
-  ]);
+  @override
+  UpgraderDevice get upgraderDevice => MockUpgraderDevice();
+
+  // AppcastConfiguration config =
+  //     AppcastConfiguration(url: 'http://some.fakewebsite.com', supportedOS: [
+  //   'android',
+  //   'fuchsia',
+  //   'ios',
+  //   'linux',
+  //   'macos',
+  //   'web',
+  //   'windows',
+  // ]);
 
   @override
   List<AppcastItem>? items = [];
