@@ -4,7 +4,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:upgrader/upgrader.dart';
+
+import 'upgrade_messages.dart';
+import 'upgrade_state.dart';
+import 'upgrader.dart';
 
 /// There are two different dialog styles: Cupertino and Material
 enum UpgradeDialogStyle { cupertino, material }
@@ -140,9 +143,10 @@ class UpgradeAlertState extends State<UpgradeAlert> {
       displayed = true;
       final appMessages = widget.upgrader.determineMessages(context);
 
-      Future.delayed(const Duration(milliseconds: 0), () {
+      Future.delayed(Duration.zero, () {
         showTheDialog(
           key: widget.dialogKey ?? const Key('upgrader_alert_dialog'),
+          // ignore: use_build_context_synchronously
           context: context,
           title: appMessages.message(UpgraderMessage.title),
           message: widget.upgrader.body(appMessages),
@@ -236,7 +240,7 @@ class UpgradeAlertState extends State<UpgradeAlert> {
       builder: (BuildContext context) {
         return PopScope(
           canPop: onCanPop(),
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (widget.upgrader.state.debugLogging) {
               print('upgrader: showTheDialog onPopInvoked: $didPop');
             }
@@ -320,13 +324,28 @@ class UpgradeAlertState extends State<UpgradeAlert> {
         )));
     final actions = <Widget>[
       if (showIgnore)
-        button(cupertino, messages.message(UpgraderMessage.buttonTitleIgnore),
-            context, () => onUserIgnored(context, true)),
+        button(
+          cupertino: cupertino,
+          text: messages.message(UpgraderMessage.buttonTitleIgnore),
+          context: context,
+          onPressed: () => onUserIgnored(context, true),
+          isDefaultAction: false,
+        ),
       if (showLater)
-        button(cupertino, messages.message(UpgraderMessage.buttonTitleLater),
-            context, () => onUserLater(context, true)),
-      button(cupertino, messages.message(UpgraderMessage.buttonTitleUpdate),
-          context, () => onUserUpdated(context, !widget.upgrader.blocked())),
+        button(
+          cupertino: cupertino,
+          text: messages.message(UpgraderMessage.buttonTitleLater),
+          context: context,
+          onPressed: () => onUserLater(context, true),
+          isDefaultAction: false,
+        ),
+      button(
+        cupertino: cupertino,
+        text: messages.message(UpgraderMessage.buttonTitleUpdate),
+        context: context,
+        onPressed: () => onUserUpdated(context, !widget.upgrader.blocked()),
+        isDefaultAction: true,
+      ),
     ];
 
     return cupertino
@@ -336,12 +355,18 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             key: key, title: textTitle, content: content, actions: actions);
   }
 
-  Widget button(bool cupertino, String? text, BuildContext context,
-      VoidCallback? onPressed) {
+  Widget button({
+    required bool cupertino,
+    String? text,
+    required BuildContext context,
+    VoidCallback? onPressed,
+    bool isDefaultAction = false,
+  }) {
     return cupertino
         ? CupertinoDialogAction(
             textStyle: widget.cupertinoButtonTextStyle,
             onPressed: onPressed,
+            isDefaultAction: isDefaultAction,
             child: Text(text ?? ''))
         : TextButton(onPressed: onPressed, child: Text(text ?? ''));
   }

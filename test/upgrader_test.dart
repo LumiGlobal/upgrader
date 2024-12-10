@@ -1156,6 +1156,7 @@ void main() {
     verifyMessages(UpgraderMessages(code: 'mn'), 'mn');
     verifyMessages(UpgraderMessages(code: 'nb'), 'nb');
     verifyMessages(UpgraderMessages(code: 'nl'), 'nl');
+    verifyMessages(UpgraderMessages(code: 'ps'), 'ps');
     verifyMessages(UpgraderMessages(code: 'pt'), 'pt');
     verifyMessages(UpgraderMessages(code: 'pl'), 'pl');
     verifyMessages(UpgraderMessages(code: 'ru'), 'ru');

@@ -15,13 +15,13 @@ on:
 jobs:
   build-and-test:
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     strategy:
       matrix:
-        flutter-version: ['3.16.0', '3.19.4']
+        flutter-version: ['3.24.0', '3.24.5']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: subosito/flutter-action@v2
         with:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Analyze
         run: flutter analyze
-      
+
       - name: Run unit and widget tests
         run: flutter test --coverage --coverage-path=lcov.info
 

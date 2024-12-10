@@ -16,5 +16,4 @@ export 'src/upgrade_os.dart';
 export 'src/upgrade_state.dart';
 export 'src/upgrade_store_controller.dart';
 export 'src/upgrader.dart';
-export 'src/app_update_dialog.dart';
 export 'src/upgrader_version_info.dart';

@@ -1,6 +1,4 @@
-/*
- * Copyright (c) 2020-2022 Larry Aasen. All rights reserved.
- */
+// Copyright (c) 2020-2024 Larry Aasen. All rights reserved.
 
 import 'dart:ui';
 
@@ -10,7 +8,7 @@ import 'package:upgrader/src/message_constants.dart';
 /// This allows a value of type T or T? to be treated as a value of type T?.
 ///
 /// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` to support older versions of the API as well.
+/// with `!` and `?` to support older versions of the API as w ell.
 T? ambiguate<T>(T? value) => value;
 
 /// The message identifiers used in upgrader.
@@ -80,9 +78,7 @@ class UpgraderMessages {
         return releaseNotes;
       case UpgraderMessage.title:
         return title;
-      default:
     }
-    return null;
   }
 
   /// Determine the current language code, either from the context, or
@@ -157,7 +153,7 @@ class UpgraderMessages {
         break;
       case 'hi':
         message =
-            '{app name} का एक नया संस्करण उपलब्ध है। संस्करण {{currentAppStoreVersion}} अब उपलब्ध है-आपके पास है {{currentInstalledVersion}}.';
+            '{{app name}} का एक नया संस्करण उपलब्ध है। आपके पास संस्करण {{currentInstalledVersion}} है, लेकिन अब {{currentAppStoreVersion}} उपलब्ध है।';
         break;
       case 'ht':
         message =
@@ -173,7 +169,7 @@ class UpgraderMessages {
         break;
       case 'it':
         message =
-            'Una nuova versione di {{appName}} è disponibile! La versione {{currentAppStoreVersion}} è ora disponibile, voi avete {{currentInstalledVersion}}.';
+            'Una nuova versione di {{appName}} è disponibile! La versione {{currentAppStoreVersion}} è ora disponibile, voi avete la {{currentInstalledVersion}}.';
         break;
       case 'ja':
         message =
@@ -218,6 +214,10 @@ class UpgraderMessages {
       case 'pl':
         message =
             'Nowa wersja {{appName}} jest dostępna! Wersja {{currentAppStoreVersion}} jest dostępna, Ty masz {{currentInstalledVersion}}.';
+        break;
+      case 'ps':
+        message =
+            'د {{appName}} آپلیکشن  نوې نسخه شتون لري! {{currentAppStoreVersion}} شتون لري، مګر تاسو اوس هم {{currentInstalledVersion}} کاروئ.';
         break;
       case 'ru':
         message =
@@ -298,7 +298,7 @@ class UpgraderMessages {
         message = 'התעלם';
         break;
       case 'hi':
-        message = 'नज़रअंदाज़ करना';
+        message = 'नज़रअंदाज़ करें';
         break;
       case 'ht':
         message = 'INYORE';
@@ -345,6 +345,9 @@ class UpgraderMessages {
       case 'pl':
         message = 'IGNORUJ';
         break;
+      case 'ps':
+        message = 'ردکول';
+        break;
       case 'ru':
         message = 'НЕТ';
         break;
@@ -387,9 +390,6 @@ class UpgraderMessages {
         message = messageButtonTitleLater['ms']!;
         break;
       case 'ar':
-        //only minor change here, removing the character at the left top of the arabic word (لاحقاً)
-        // before: message = 'لاحقاً';
-        //now:
         message = 'لاحقا';
         break;
       case 'bn':
@@ -420,7 +420,7 @@ class UpgraderMessages {
         message = 'אחר-כך';
         break;
       case 'hi':
-        message = 'बाद में';
+        message = 'बाद में करें';
         break;
       case 'ht':
         message = 'PITA';
@@ -466,6 +466,9 @@ class UpgraderMessages {
         break;
       case 'pl':
         message = 'PÓŹNIEJ';
+        break;
+      case 'ps':
+        message = 'وروسته';
         break;
       case 'ru':
         message = 'ПОЗЖЕ';
@@ -539,7 +542,7 @@ class UpgraderMessages {
         message = 'עדכן';
         break;
       case 'hi':
-        message = 'अभी अद्यतन करें';
+        message = 'अभी नया संस्करण स्थापित करें';
         break;
       case 'ht':
         message = 'MIZAJOU KOUNYE A';
@@ -585,6 +588,9 @@ class UpgraderMessages {
         break;
       case 'pl':
         message = 'AKTUALIZUJ';
+        break;
+      case 'ps':
+        message = 'اوس تازه کړئ';
         break;
       case 'ru':
         message = 'ОБНОВИТЬ';
@@ -658,7 +664,7 @@ class UpgraderMessages {
         message = 'האם תרצה לעדכן עכשיו?';
         break;
       case 'hi':
-        message = 'क्या आप इसे अभी अद्यतन करना चाहेंगे?';
+        message = 'क्या आप इसे अभी नया संस्करण स्थापित करना चाहेंगे?';
         break;
       case 'ht':
         message = 'Èske ou vle mete aplikasyon an ajou kounye a?';
@@ -670,7 +676,7 @@ class UpgraderMessages {
         message = 'Apakah Anda ingin memperbaruinya sekarang?';
         break;
       case 'it':
-        message = 'Ti piacerebbe aggiornare ora?';
+        message = 'Vorresti aggiornare ora?';
         break;
       case 'ja':
         message = '今すぐアップデートしますか?';
@@ -704,6 +710,9 @@ class UpgraderMessages {
         break;
       case 'pl':
         message = 'Czy chciałbyś zaktualizować teraz?';
+        break;
+      case 'ps':
+        message = 'آی غواړئ دا اوس تازه کړئ؟';
         break;
       case 'ru':
         message = 'Хотите обновить сейчас?';
@@ -765,7 +774,7 @@ class UpgraderMessages {
         message = 'חדש בגרסה';
         break;
       case 'hi':
-        message = 'रिहाई टिप्पणी';
+        message = 'नए संस्करण का विवरण';
         break;
       case 'id':
         message = 'Catatan Rilis';
@@ -806,6 +815,7 @@ class UpgraderMessages {
       case 'nb':
       case 'nl':
       case 'pl':
+      case 'ps':
       case 'sv':
       case 'ta':
       case 'uk':
@@ -861,7 +871,7 @@ class UpgraderMessages {
         message = 'לעדכן יישומון?';
         break;
       case 'hi':
-        message = 'अद्यतन ऐप?';
+        message = 'ऐप का नया संस्करण स्थापित करें?';
         break;
       case 'ht':
         message = 'Mete app la ajou?';
@@ -907,6 +917,9 @@ class UpgraderMessages {
         break;
       case 'pl':
         message = 'Czy zaktualizować aplikację?';
+        break;
+      case 'ps':
+        message = 'نوې نسخه';
         break;
       case 'ru':
         message = 'Обновить?';
