@@ -1,16 +1,15 @@
-// Copyright (c) 2018-2024 Larry Aasen. All rights reserved.
+// Copyright (c) 2018-2025 Larry Aasen. All rights reserved.
 
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:version/version.dart';
 
-import 'upgrade_device.dart';
 import 'upgrade_messages.dart';
 import 'upgrade_os.dart';
 import 'upgrade_state.dart';
@@ -56,7 +55,6 @@ class Upgrader with WidgetsBindingObserver {
     UpgraderMessages? messages,
     String? minAppVersion,
     UpgraderStoreController? storeController,
-    UpgraderDevice? upgraderDevice,
     UpgraderOS? upgraderOS,
     this.willDisplayUpgrade,
   })  : _state = UpgraderState(
@@ -71,7 +69,6 @@ class Upgrader with WidgetsBindingObserver {
           messages: messages,
           minAppVersion:
               parseVersion(minAppVersion, 'minAppVersion', debugLogging),
-          upgraderDevice: upgraderDevice ?? UpgraderDevice(),
           upgraderOS: upgraderOS ?? UpgraderOS(),
         ),
         storeController = storeController ?? UpgraderStoreController() {
@@ -499,7 +496,7 @@ class Upgrader with WidgetsBindingObserver {
   }
 
   /// Launch the app store from the app store listing URL.
-  void sendUserToAppStore() async {
+  Future<void> sendUserToAppStore() async {
     final appStoreListingURL = versionInfo?.appStoreListingURL;
     if (appStoreListingURL == null || appStoreListingURL.isEmpty) {
       if (state.debugLogging) {

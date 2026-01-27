@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Larry Aasen. All rights reserved.
+// Copyright (c) 2024-2025 Larry Aasen. All rights reserved.
 
 import 'dart:async';
 
@@ -207,10 +207,14 @@ class UpgraderAppcastStore extends UpgraderStore {
   UpgraderAppcastStore({
     required this.appcastURL,
     this.appcast,
+    required this.osVersion,
   });
 
   final String appcastURL;
   final Appcast? appcast;
+
+  /// The operating system version.
+  final Version osVersion;
 
   @override
   Future<UpgraderVersionInfo> getVersionInfo(
@@ -227,8 +231,8 @@ class UpgraderAppcastStore extends UpgraderStore {
         Appcast(
             client: state.client,
             clientHeaders: state.clientHeaders,
-            upgraderDevice: state.upgraderDevice,
-            upgraderOS: state.upgraderOS);
+            upgraderOS: state.upgraderOS,
+            osVersion: osVersion);
     await localAppcast.parseAppcastItemsFromUri(appcastURL);
     if (state.debugLogging) {
       var count = localAppcast.items == null ? 0 : localAppcast.items!.length;

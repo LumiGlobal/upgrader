@@ -15,10 +15,10 @@ on:
 jobs:
   build-and-test:
     runs-on: macos-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
     strategy:
       matrix:
-        flutter-version: ['3.24.0', '3.24.5']
+        flutter-version: ['3.27.4', '3.29.3', '3.32.8', '3.35.7', '3.38.6']
 
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +27,9 @@ jobs:
         with:
           flutter-version: '${{ matrix.flutter-version }}'
           channel: 'stable'
+
+      - name: Flutter doctor
+        run: flutter doctor --verbose
 
       - name: Get flutter packages
         run: flutter pub get
@@ -44,7 +47,7 @@ jobs:
           files: lcov.info
 
       - name: Boot the simulator
-        run: 	xcrun simctl boot 'iPhone 15'
+        run: 	xcrun simctl boot 'iPhone 17'
 
       - name: Run the driver test
         run: 	cd example; flutter drive --target=test/driver_test/driver.dart --driver=test/driver_test/driver_test.dart

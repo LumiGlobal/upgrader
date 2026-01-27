@@ -1,3 +1,60 @@
+## 12.5.0
+
+- Fixed Slovenian ISO 639-1 code to ('sl'). (thanks to @AlanJereb)
+
+## 12.4.0
+
+- Added new language translation for Estonian ('et'). (thanks to @sisalik1)
+- Added new language translation for Slovenian ('si'). (thanks to @AlanJereb)
+- [526] Incorporated the suggestion of adding context to UpgraderMessages(). (thanks to @defuncart)
+- [530] Updated Italian upgrade messages for clarity. (thanks to @Samplasion)
+- [533] Fixed Korean translation for release notes. (thanks to @junsuk5)
+- Updated the Android example code.
+
+## 12.3.0
+
+- [525] [520] Added fallback version parsing for regional Play Store pages. (thanks to @youngkiu)
+
+## 12.2.0
+
+- [521] [522] Added fallback version parsing for regional Play Store pages. (thanks to @youngkiu)
+
+## 12.1.0
+
+- Added the showPrompt parameter to UpgradeAlert and UpgradeCard to hide the display of the prompt. (thanks to @EArminjon)
+
+## 12.0.0
+
+- Removed the use of device_info_plus to reduce the number of dependencies used by this package.
+- Renamed master branch to main.
+- The minimum Flutter version supported is now 3.27.0.
+
+## 11.5.1
+
+- [510] Updated device_info_plus to support 12.0.0 with updated constraint <13.0.0.
+- [511] Updated package_info_plus to support 9.0.0 with updated constraint <10.0.0.
+
+## 11.5.0
+
+- [482] Will now call showCupertinoDialog instead of showDialog for CupertinoApp.
+- [489] Fixed issue where null check operator used on a null value by checking the context.mounted before calling showDialog.
+- [500] Fixed the Hindi ('hi) translations issue with the app name in the body message.
+- Updated README to include CupertinoApp, and added a widget test for CupertinoApp.
+
+## 11.5.0-alpha.1
+
+- [489] Fixed issue where null check operator used on a null value by checking the context.mounted before calling showDialog.
+- [482] Will now call showCupertinoDialog instead of showDialog for CupertinoApp.
+
+## 11.4.0
+
+- Added new language translations for Uzbek ('uz'). (thanks to @Shuhrat-java)
+- Added new language translations for Romanian ('ro'). (thanks to @SK1n)
+
+## 11.3.2
+
+- Added Future keyword in return type of sendUserToAppStore(). (thanks to @EArminjon)
+
 ## 11.3.1
 
 - Minor syntax change to fix compiler warning.
