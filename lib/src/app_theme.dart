@@ -10,8 +10,9 @@ class DefaultThemeData {
       scaffoldBackgroundColor: themeData.justWhite,
       iconTheme: IconThemeData(color: themeData.primary4Grey),
       dividerColor: themeData.offWhite,
-      textSelectionTheme:
-          TextSelectionThemeData(cursorColor: themeData.primary1),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: themeData.primary1,
+      ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         centerTitle: false,
@@ -23,8 +24,9 @@ class DefaultThemeData {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           fixedSize: const Size.fromHeight(56),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 0.0,
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
@@ -33,7 +35,7 @@ class DefaultThemeData {
         primary: themeData.primary1,
         secondary: themeData.secondary,
       ),
-      dialogBackgroundColor: themeData.justWhite,
+      dialogTheme: DialogThemeData(backgroundColor: themeData.justWhite),
       cardColor: themeData.justWhite,
     );
   }
@@ -41,60 +43,65 @@ class DefaultThemeData {
   static TextTheme textTheme(AppThemeData themeData) {
     return TextTheme(
       displayLarge: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 39.0,
-          height: 1.28,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 39.0,
+        height: 1.28,
+        color: themeData.darkest,
+      ),
       displayMedium: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 31.0,
-          height: 1.3,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 31.0,
+        height: 1.3,
+        color: themeData.darkest,
+      ),
       displaySmall: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 25.0,
-          height: 1.2,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 25.0,
+        height: 1.2,
+        color: themeData.darkest,
+      ),
       headlineMedium: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 20.0,
-          height: 1.25,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 20.0,
+        height: 1.25,
+        color: themeData.darkest,
+      ),
       headlineSmall: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 16.0,
-          height: 1.25,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 16.0,
+        height: 1.25,
+        color: themeData.darkest,
+      ),
       titleLarge: GoogleFonts.poppins(
-          fontWeight: FontWeight.w700,
-          fontSize: 14.0,
-          height: 1.2,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w700,
+        fontSize: 14.0,
+        height: 1.2,
+        color: themeData.darkest,
+      ),
       bodyLarge: GoogleFonts.sen(
-          fontWeight: FontWeight.w400,
-          fontSize: 16.0,
-          height: 1.25,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w400,
+        fontSize: 16.0,
+        height: 1.25,
+        color: themeData.darkest,
+      ),
       bodyMedium: GoogleFonts.sen(
-          fontWeight: FontWeight.w400,
-          fontSize: 14.0,
-          height: 1.15,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w400,
+        fontSize: 14.0,
+        height: 1.15,
+        color: themeData.darkest,
+      ),
       bodySmall: GoogleFonts.sen(
-          fontWeight: FontWeight.w400,
-          fontSize: 12.0,
-          height: 1.33,
-          color: themeData.darkest),
+        fontWeight: FontWeight.w400,
+        fontSize: 12.0,
+        height: 1.33,
+        color: themeData.darkest,
+      ),
     );
   }
 }
 
 class AppTheme extends InheritedWidget {
-  const AppTheme({
-    Key? key,
-    required this.data,
-    required Widget child,
-  }) : super(key: key, child: child);
+  const AppTheme({super.key, required this.data, required super.child});
 
   final AppThemeData data;
 

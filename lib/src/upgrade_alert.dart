@@ -127,7 +127,8 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             }
 
             if (!displayed) {
-              final checkContext = widget.navigatorKey != null &&
+              final checkContext =
+                  widget.navigatorKey != null &&
                       widget.navigatorKey!.currentContext != null
                   ? widget.navigatorKey!.currentContext!
                   : context;
@@ -157,8 +158,9 @@ class UpgradeAlertState extends State<UpgradeAlert> {
           context: context,
           title: appMessages.message(UpgraderMessage.title),
           message: widget.upgrader.body(appMessages),
-          releaseNotes:
-              shouldDisplayReleaseNotes ? widget.upgrader.releaseNotes : null,
+          releaseNotes: shouldDisplayReleaseNotes
+              ? widget.upgrader.releaseNotes
+              : null,
           barrierDismissible: widget.barrierDismissible,
           messages: appMessages,
         );
@@ -253,22 +255,22 @@ class UpgradeAlertState extends State<UpgradeAlert> {
         context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
     dialogBuilder(BuildContext context) => PopScope(
-          canPop: onCanPop(),
-          onPopInvokedWithResult: (didPop, result) {
-            if (widget.upgrader.state.debugLogging) {
-              print('upgrader: showTheDialog onPopInvoked: $didPop');
-            }
-          },
-          child: alertDialog(
-            key,
-            title ?? '',
-            message,
-            releaseNotes,
-            context,
-            widget.dialogStyle == UpgradeDialogStyle.cupertino,
-            messages,
-          ),
-        );
+      canPop: onCanPop(),
+      onPopInvokedWithResult: (didPop, result) {
+        if (widget.upgrader.state.debugLogging) {
+          print('upgrader: showTheDialog onPopInvoked: $didPop');
+        }
+      },
+      child: alertDialog(
+        key,
+        title ?? '',
+        message,
+        releaseNotes,
+        context,
+        widget.dialogStyle == UpgradeDialogStyle.cupertino,
+        messages,
+      ),
+    );
 
     if (isCupertinoApp) {
       showCupertinoDialog(
@@ -303,13 +305,14 @@ class UpgradeAlertState extends State<UpgradeAlert> {
   }
 
   Widget alertDialog(
-      Key? key,
-      String title,
-      String message,
-      String? releaseNotes,
-      BuildContext context,
-      bool cupertino,
-      UpgraderMessages messages) {
+    Key? key,
+    String title,
+    String message,
+    String? releaseNotes,
+    BuildContext context,
+    bool cupertino,
+    UpgraderMessages messages,
+  ) {
     // If installed version is below minimum app version, or is a critical update,
     // disable ignore and later buttons.
     final isBlocked = widget.upgrader.blocked();
@@ -319,26 +322,30 @@ class UpgradeAlertState extends State<UpgradeAlert> {
     Widget? notes;
     if (releaseNotes != null) {
       notes = Padding(
-          padding: const EdgeInsets.only(top: 15.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: cupertino
-                ? CrossAxisAlignment.center
-                : CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(messages.message(UpgraderMessage.releaseNotes) ?? '',
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(releaseNotes),
-            ],
-          ));
+        padding: const EdgeInsets.only(top: 15.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: cupertino
+              ? CrossAxisAlignment.center
+              : CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              messages.message(UpgraderMessage.releaseNotes) ?? '',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(releaseNotes),
+          ],
+        ),
+      );
     }
     final textTitle = Text(title, key: const Key('upgrader.dialog.title'));
     final content = Container(
-        constraints: const BoxConstraints(maxHeight: 400),
-        child: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment:
-              cupertino ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      constraints: const BoxConstraints(maxHeight: 400),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: cupertino
+              ? CrossAxisAlignment.center
+              : CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(message),
@@ -347,9 +354,11 @@ class UpgradeAlertState extends State<UpgradeAlert> {
                 padding: const EdgeInsets.only(top: 15.0),
                 child: Text(messages.message(UpgraderMessage.prompt) ?? ''),
               ),
-            if (notes != null) notes,
+            ?notes,
           ],
-        )));
+        ),
+      ),
+    );
     final actions = <Widget>[
       if (showIgnore)
         button(
@@ -378,9 +387,17 @@ class UpgradeAlertState extends State<UpgradeAlert> {
 
     return cupertino
         ? CupertinoAlertDialog(
-            key: key, title: textTitle, content: content, actions: actions)
+            key: key,
+            title: textTitle,
+            content: content,
+            actions: actions,
+          )
         : AlertDialog(
-            key: key, title: textTitle, content: content, actions: actions);
+            key: key,
+            title: textTitle,
+            content: content,
+            actions: actions,
+          );
   }
 
   Widget button({
@@ -395,7 +412,8 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             textStyle: widget.cupertinoButtonTextStyle,
             onPressed: onPressed,
             isDefaultAction: isDefaultAction,
-            child: Text(text ?? ''))
+            child: Text(text ?? ''),
+          )
         : TextButton(onPressed: onPressed, child: Text(text ?? ''));
   }
 }
