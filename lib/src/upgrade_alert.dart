@@ -26,7 +26,6 @@ class UpgradeAlert extends StatefulWidget {
     this.onLater,
     this.onUpdate,
     this.shouldPopScope,
-    this.showPrompt = true,
     this.showIgnore = true,
     this.showLater = true,
     this.showReleaseNotes = true,
@@ -60,9 +59,6 @@ class UpgradeAlert extends StatefulWidget {
 
   /// Called to determine if the dialog blocks the current route from being popped.
   final BoolCallback? shouldPopScope;
-
-  /// Hide or show Prompt label on dialog (default: true)
-  final bool showPrompt;
 
   /// Hide or show Ignore button on dialog (default: true)
   final bool showIgnore;
@@ -235,21 +231,14 @@ class UpgradeAlertState extends State<UpgradeAlert> {
       print('upgrader: showTheDialog releaseNotes: $releaseNotes');
     }
 
-    if (!context.mounted) {
-      if (widget.upgrader.state.debugLogging) {
-        print('upgrader: showTheDialog context not mounted - dialog not shown');
-      }
-      return;
-    }
-
     // Save the date/time as the last time alerted.
     widget.upgrader.saveLastAlerted();
 
-    // Detect if CupertinoApp is in the widget tree
-    final isCupertinoApp =
-        context.findAncestorWidgetOfExactType<CupertinoApp>() != null;
-
-    dialogBuilder(BuildContext context) => PopScope(
+    showDialog(
+      barrierDismissible: barrierDismissible,
+      context: context,
+      builder: (BuildContext context) {
+        return PopScope(
           canPop: onCanPop(),
           onPopInvokedWithResult: (didPop, result) {
             if (widget.upgrader.state.debugLogging) {
@@ -266,20 +255,8 @@ class UpgradeAlertState extends State<UpgradeAlert> {
             messages,
           ),
         );
-
-    if (isCupertinoApp) {
-      showCupertinoDialog(
-        barrierDismissible: barrierDismissible,
-        context: context,
-        builder: dialogBuilder,
-      );
-    } else {
-      showDialog(
-        barrierDismissible: barrierDismissible,
-        context: context,
-        builder: dialogBuilder,
-      );
-    }
+      },
+    );
   }
 
   /// Determines if the dialog blocks the current route from being popped.
@@ -339,11 +316,9 @@ class UpgradeAlertState extends State<UpgradeAlert> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(message),
-            if (widget.showPrompt)
-              Padding(
+            Padding(
                 padding: const EdgeInsets.only(top: 15.0),
-                child: Text(messages.message(UpgraderMessage.prompt) ?? ''),
-              ),
+                child: Text(messages.message(UpgraderMessage.prompt) ?? '')),
             if (notes != null) notes,
           ],
         )));

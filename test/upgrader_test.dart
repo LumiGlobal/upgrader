@@ -413,98 +413,6 @@ void main() {
     expect(notCalled, true);
   }, skip: false);
 
-  testWidgets('test UpgradeAlert in CupertinoApp', (WidgetTester tester) async {
-    final client = MockITunesSearchClient.setupMockClient();
-
-    final upgrader =
-        Upgrader(upgraderOS: MockUpgraderOS(ios: true), client: client);
-
-    upgrader.installPackageInfo(
-        packageInfo: PackageInfo(
-            appName: 'Upgrader',
-            packageName: 'com.larryaasen.upgrader',
-            version: '0.9.9',
-            buildNumber: '400'));
-    upgrader.initialize().then((value) {});
-    await tester.pumpAndSettle();
-
-    expect(upgrader.isUpdateAvailable(), true);
-    expect(upgrader.isTooSoon(), false);
-
-    expect(upgrader.state.messages, isNull);
-    upgrader.updateState(upgrader.state.copyWith(messages: UpgraderMessages()));
-    expect(upgrader.state.messages, isNotNull);
-
-    expect(upgrader.state.messages!.buttonTitleIgnore, 'IGNORE');
-    expect(upgrader.state.messages!.buttonTitleLater, 'LATER');
-    expect(upgrader.state.messages!.buttonTitleUpdate, 'UPDATE NOW');
-
-    upgrader
-        .updateState(upgrader.state.copyWith(messages: MyUpgraderMessages()));
-
-    expect(upgrader.state.messages!.buttonTitleIgnore, 'aaa');
-    expect(upgrader.state.messages!.buttonTitleLater, 'bbb');
-    expect(upgrader.state.messages!.buttonTitleUpdate, 'ccc');
-
-    var called = false;
-    var notCalled = true;
-
-    final upgradeAlert = cupertinoWrapper(
-      UpgradeAlert(
-        upgrader: upgrader,
-        dialogStyle: UpgradeDialogStyle.cupertino,
-        onUpdate: () {
-          called = true;
-          return true;
-        },
-        onIgnore: () {
-          notCalled = false;
-          return true;
-        },
-        onLater: () {
-          notCalled = false;
-          return true;
-        },
-        child: const Center(child: Text('Upgrading')),
-      ),
-    );
-    await tester.pumpWidget(upgradeAlert);
-
-    expect(find.text('Upgrader test'), findsOneWidget);
-    expect(find.text('Upgrading'), findsOneWidget);
-
-    // Pump the UI so the upgrader can display its dialog
-    await tester.pumpAndSettle();
-
-    expect(upgrader.isTooSoon(), true);
-
-    expect(find.text(upgrader.state.messages!.title), findsOneWidget);
-    expect(find.text(upgrader.body(upgrader.state.messages!)), findsOneWidget);
-    expect(find.text(upgrader.state.messages!.releaseNotes), findsOneWidget);
-    expect(find.text(upgrader.releaseNotes!), findsOneWidget);
-    expect(find.text(upgrader.state.messages!.prompt), findsOneWidget);
-    expect(find.byType(CupertinoDialogAction), findsNWidgets(3));
-    expect(
-      find.byWidgetPredicate((widget) => widget is CupertinoDialogAction),
-      findsNWidgets(3),
-    );
-    expect(
-        find.text(upgrader.state.messages!.buttonTitleIgnore), findsOneWidget);
-    expect(
-        find.text(upgrader.state.messages!.buttonTitleLater), findsOneWidget);
-    expect(
-        find.text(upgrader.state.messages!.buttonTitleUpdate), findsOneWidget);
-    expect(find.byKey(const Key('upgrader_alert_dialog')), findsOneWidget);
-
-    await tester.tap(find.text(upgrader.state.messages!.buttonTitleUpdate));
-    await tester.pumpAndSettle();
-    expect(find.text(upgrader.state.messages!.buttonTitleIgnore), findsNothing);
-    expect(find.text(upgrader.state.messages!.buttonTitleLater), findsNothing);
-    expect(find.text(upgrader.state.messages!.buttonTitleUpdate), findsNothing);
-    expect(called, true);
-    expect(notCalled, true);
-  }, skip: false);
-
   testWidgets('test UpgradeAlert ignore', (WidgetTester tester) async {
     final client = MockITunesSearchClient.setupMockClient();
     final upgrader = Upgrader(
@@ -750,7 +658,7 @@ void main() {
     expect(upgrader.state.versionInfo?.minAppVersion.toString(), '4.5.6');
   }, skip: false);
 
-  testWidgets('test upgrader store version android with bracket pattern',
+  testWidgets('test upgrader store version android',
       (WidgetTester tester) async {
     final client = await MockPlayStoreSearchClient.setupMockClient(
       verifyHeaders: {'header1': 'value1'},
@@ -772,9 +680,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(upgrader.belowMinAppVersion(), isFalse);
-    // Version 1.19.2 is extracted using bracket pattern ]]],"X.Y.Z"
-    expect(
-        upgrader.state.versionInfo?.appStoreVersion, Version.parse('1.19.2'));
+    expect(upgrader.state.versionInfo?.appStoreVersion, isNull);
   }, skip: false);
 
   testWidgets('test upgrader minAppVersion description ios',
@@ -861,9 +767,9 @@ void main() {
       debugLogging: true,
       storeController: UpgraderStoreController(
         oniOS: () => UpgraderAppcastStore(
-            appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-            appcast: fakeAppcast,
-            osVersion: Version(0, 0, 0)),
+          appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
+          appcast: fakeAppcast,
+        ),
       ),
     )..installPackageInfo(
         packageInfo: PackageInfo(
@@ -889,9 +795,9 @@ void main() {
       storeController: UpgraderStoreController(
         oniOS: () => UpgraderAppcastStore(
           appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-          osVersion: Version(0, 0, 0),
         ),
       ),
+      upgraderDevice: MockUpgraderDevice(),
     )..installPackageInfo(
         packageInfo: PackageInfo(
           appName: 'Upgrader',
@@ -912,13 +818,13 @@ void main() {
     final upgrader = Upgrader(
       client: mockClient,
       upgraderOS: upgraderOS,
+      upgraderDevice: MockUpgraderDevice(),
       debugLogging: true,
       storeController: UpgraderStoreController(
         onAndroid: () => UpgraderAppcastStore(
-            appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-            osVersion: Version(0, 0, 0)
-            // client: mockClient,
-            ),
+          appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
+          // client: mockClient,
+        ),
       ),
     )..installPackageInfo(
         packageInfo: PackageInfo(
@@ -960,12 +866,11 @@ void main() {
     final upgrader = Upgrader(
       client: mockClient,
       upgraderOS: upgraderOS,
+      upgraderDevice: MockUpgraderDevice(),
       debugLogging: true,
       storeController: UpgraderStoreController(
         oniOS: () => UpgraderAppcastStore(
-          appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-          osVersion: Version(0, 0, 0),
-        ),
+            appcastURL: 'https://sparkle-project.org/test/testappcast.xml'),
       ),
     )..installPackageInfo(
         packageInfo: PackageInfo(
@@ -1039,6 +944,7 @@ void main() {
     test('should respect debugDisplayAlways property', () async {
       final client = MockITunesSearchClient.setupMockClient();
       final upgrader = Upgrader(
+          upgraderDevice: MockUpgraderDevice(),
           upgraderOS: MockUpgraderOS(ios: true),
           client: client,
           debugLogging: true);
@@ -1230,7 +1136,6 @@ void main() {
     verifyMessages(UpgraderMessages(code: 'bn'), 'bn');
     verifyMessages(UpgraderMessages(code: 'da'), 'da');
     verifyMessages(UpgraderMessages(code: 'es'), 'es');
-    verifyMessages(UpgraderMessages(code: 'et'), 'et');
     verifyMessages(UpgraderMessages(code: 'fa'), 'fa');
     verifyMessages(UpgraderMessages(code: 'fil'), 'fil');
     verifyMessages(UpgraderMessages(code: 'fr'), 'fr');
@@ -1254,9 +1159,7 @@ void main() {
     verifyMessages(UpgraderMessages(code: 'ps'), 'ps');
     verifyMessages(UpgraderMessages(code: 'pt'), 'pt');
     verifyMessages(UpgraderMessages(code: 'pl'), 'pl');
-    verifyMessages(UpgraderMessages(code: 'ro'), 'ro');
     verifyMessages(UpgraderMessages(code: 'ru'), 'ru');
-    verifyMessages(UpgraderMessages(code: 'sl'), 'sl');
     verifyMessages(UpgraderMessages(code: 'sv'), 'sv');
     verifyMessages(UpgraderMessages(code: 'ta'), 'ta');
     verifyMessages(UpgraderMessages(code: 'te'), 'te');

@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:upgrader/upgrader.dart';
-import 'package:version/version.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,11 +18,10 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   static const appcastURL =
-      'https://raw.githubusercontent.com/larryaasen/upgrader/main/test/testappcast.xml';
+      'https://raw.githubusercontent.com/larryaasen/upgrader/master/test/testappcast.xml';
   final upgrader = Upgrader(
     storeController: UpgraderStoreController(
-        onAndroid: () => UpgraderAppcastStore(
-            appcastURL: appcastURL, osVersion: Version(0, 0, 0))),
+        onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL)),
     debugLogging: true,
     minAppVersion: '1.1.0',
   );
