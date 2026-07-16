@@ -207,14 +207,24 @@ class UpgraderAppcastStore extends UpgraderStore {
   UpgraderAppcastStore({
     required this.appcastURL,
     this.appcast,
-    required this.osVersion,
+    this.osVersion,
   });
 
   final String appcastURL;
   final Appcast? appcast;
 
-  /// The operating system version.
-  final Version osVersion;
+  /// The operating system version string (e.g. `'14.0.0'`).
+  /// When `null` or unparseable, defaults to `Version(0, 0, 0)`.
+  final String? osVersion;
+
+  AppcastItem? _bestItem;
+
+  /// The best matching appcast item from the most recent [getVersionInfo] call.
+  ///
+  /// This value is intended to be read only after awaiting [getVersionInfo].
+  /// It is `null` before any lookup has completed or when no suitable appcast
+  /// item is found for the current version check.
+  AppcastItem? get bestItem => _bestItem;
 
   @override
   Future<UpgraderVersionInfo> getVersionInfo(
@@ -227,12 +237,26 @@ class UpgraderAppcastStore extends UpgraderStore {
     bool? isCriticalUpdate;
     String? releaseNotes;
 
+    Version parsedOsVersion;
+    try {
+      parsedOsVersion = osVersion?.isNotEmpty == true
+          ? Version.parse(osVersion!)
+          : Version(0, 0, 0);
+    } catch (e) {
+      parsedOsVersion = Version(0, 0, 0);
+      if (state.debugLogging) {
+        print(
+            'upgrader: UpgraderAppcastStore: could not parse osVersion "$osVersion": $e');
+      }
+    }
+
     final localAppcast = appcast ??
         Appcast(
             client: state.client,
             clientHeaders: state.clientHeaders,
             upgraderOS: state.upgraderOS,
-            osVersion: osVersion);
+            osVersion: parsedOsVersion,
+            currentAppVersion: installedVersion);
     await localAppcast.parseAppcastItemsFromUri(appcastURL);
     if (state.debugLogging) {
       var count = localAppcast.items == null ? 0 : localAppcast.items!.length;
@@ -241,10 +265,13 @@ class UpgraderAppcastStore extends UpgraderStore {
     final criticalUpdateItem = localAppcast.bestCriticalItem();
     final criticalVersion = criticalUpdateItem?.versionString ?? '';
 
+    _bestItem = null;
     final bestItem = localAppcast.bestItem();
     if (bestItem != null &&
         bestItem.versionString != null &&
         bestItem.versionString!.isNotEmpty) {
+      _bestItem = bestItem;
+
       if (state.debugLogging) {
         print('upgrader: UpgraderAppcastStore best item version: '
             '${bestItem.versionString}');

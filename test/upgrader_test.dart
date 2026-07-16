@@ -863,7 +863,7 @@ void main() {
         oniOS: () => UpgraderAppcastStore(
             appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
             appcast: fakeAppcast,
-            osVersion: Version(0, 0, 0)),
+            osVersion: '0.0.0'),
       ),
     )..installPackageInfo(
         packageInfo: PackageInfo(
@@ -889,7 +889,7 @@ void main() {
       storeController: UpgraderStoreController(
         oniOS: () => UpgraderAppcastStore(
           appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-          osVersion: Version(0, 0, 0),
+          osVersion: '0.0.0',
         ),
       ),
     )..installPackageInfo(
@@ -916,7 +916,7 @@ void main() {
       storeController: UpgraderStoreController(
         onAndroid: () => UpgraderAppcastStore(
             appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-            osVersion: Version(0, 0, 0)
+            osVersion: '0.0.0'
             // client: mockClient,
             ),
       ),
@@ -964,7 +964,7 @@ void main() {
       storeController: UpgraderStoreController(
         oniOS: () => UpgraderAppcastStore(
           appcastURL: 'https://sparkle-project.org/test/testappcast.xml',
-          osVersion: Version(0, 0, 0),
+          osVersion: '0.0.0',
         ),
       ),
     )..installPackageInfo(
@@ -1033,6 +1033,70 @@ void main() {
         Upgrader(durationUntilAlertAgain: const Duration(days: 10));
     UpgradeAlert(upgrader: upgrader2);
     expect(upgrader2.state.durationUntilAlertAgain, const Duration(days: 10));
+  }, skip: false);
+
+  test(
+      'isTooSoon returns false when app store version is newer than last alerted version',
+      () async {
+    // Simulate that the user was last alerted about version 1.0.1 recently.
+    await preferences.setString('lastVersionAlerted', '1.0.1');
+    await preferences.setString('lastTimeAlerted',
+        DateTime.now().subtract(const Duration(hours: 1)).toString());
+
+    final upgrader = Upgrader(
+      upgraderOS: MockUpgraderOS(ios: true),
+      client: MockITunesSearchClient.setupMockClient(),
+      debugLogging: true,
+    )..installPackageInfo(
+        packageInfo: PackageInfo(
+          appName: 'Upgrader',
+          packageName: 'com.larryaasen.upgrader',
+          version: '1.0.0',
+          buildNumber: '1',
+        ),
+      );
+
+    await upgrader.initialize();
+
+    // Simulate app store now has version 1.0.2 (newer than the alerted 1.0.1).
+    upgrader.updateState(upgrader.state.copyWith(
+        versionInfo: UpgraderVersionInfo(appStoreVersion: Version(1, 0, 2))));
+
+    // isTooSoon should be false because the available version is different
+    // from the version that was last alerted (1.0.1 -> 1.0.2).
+    expect(upgrader.isTooSoon(), false);
+  }, skip: false);
+
+  test(
+      'isTooSoon returns true when app store version matches last alerted version',
+      () async {
+    // Simulate that the user was last alerted about version 1.0.1 recently.
+    await preferences.setString('lastVersionAlerted', '1.0.1');
+    await preferences.setString('lastTimeAlerted',
+        DateTime.now().subtract(const Duration(hours: 1)).toString());
+
+    final upgrader = Upgrader(
+      upgraderOS: MockUpgraderOS(ios: true),
+      client: MockITunesSearchClient.setupMockClient(),
+      debugLogging: true,
+    )..installPackageInfo(
+        packageInfo: PackageInfo(
+          appName: 'Upgrader',
+          packageName: 'com.larryaasen.upgrader',
+          version: '1.0.0',
+          buildNumber: '1',
+        ),
+      );
+
+    await upgrader.initialize();
+
+    // Simulate app store still has version 1.0.1 (same as the alerted version).
+    upgrader.updateState(upgrader.state.copyWith(
+        versionInfo: UpgraderVersionInfo(appStoreVersion: Version(1, 0, 1))));
+
+    // isTooSoon should be true because the version hasn't changed and it was
+    // alerted only 1 hour ago (within the 3-day durationUntilAlertAgain).
+    expect(upgrader.isTooSoon(), true);
   }, skip: false);
 
   group('shouldDisplayUpgrade', () {
@@ -1140,6 +1204,52 @@ void main() {
       final shouldDisplayUpgrade = upgrader.shouldDisplayUpgrade();
 
       expect(shouldDisplayUpgrade, isTrue);
+    }, skip: false);
+
+    test('showOnlyMandatoryUpdates suppresses optional updates', () async {
+      final upgrader = Upgrader(
+        debugLogging: true,
+        upgraderOS: MockUpgraderOS(ios: true),
+        client: MockITunesSearchClient.setupMockClient(),
+        showOnlyMandatoryUpdates: true,
+      )..installPackageInfo(
+          packageInfo: PackageInfo(
+            appName: 'Upgrader',
+            packageName: 'com.larryaasen.upgrader',
+            version: '2.0.0',
+            buildNumber: '42',
+          ),
+        );
+
+      await upgrader.initialize();
+
+      // Update is available (5.6.0 > 2.0.0) but not mandatory — should NOT display.
+      expect(upgrader.isUpdateAvailable(), isTrue);
+      expect(upgrader.blocked(), isFalse);
+      expect(upgrader.shouldDisplayUpgrade(), isFalse);
+    }, skip: false);
+
+    test('showOnlyMandatoryUpdates still shows mandatory updates', () async {
+      final upgrader = Upgrader(
+        debugLogging: true,
+        upgraderOS: MockUpgraderOS(ios: true),
+        client: MockITunesSearchClient.setupMockClient(),
+        showOnlyMandatoryUpdates: true,
+        minAppVersion: '3.0.0',
+      )..installPackageInfo(
+          packageInfo: PackageInfo(
+            appName: 'Upgrader',
+            packageName: 'com.larryaasen.upgrader',
+            version: '2.0.0',
+            buildNumber: '42',
+          ),
+        );
+
+      await upgrader.initialize();
+
+      // Installed version 2.0.0 < minAppVersion 3.0.0 — should display.
+      expect(upgrader.belowMinAppVersion(), isTrue);
+      expect(upgrader.shouldDisplayUpgrade(), isTrue);
     }, skip: false);
 
     test('packageInfo is empty', () async {
