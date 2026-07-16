@@ -170,13 +170,6 @@ extension PlayStoreResults on PlayStoreSearchAPI {
   /// release notes, the main app description is used.
   String? releaseNotes(Document response) {
     try {
-      final descriptionReleaseNotes = releaseNotesFromDescriptions(
-        response.querySelectorAll('[itemprop="description"]'),
-      );
-      if (descriptionReleaseNotes != null) {
-        return descriptionReleaseNotes;
-      }
-
       final sectionElements = response.getElementsByClassName('W4P4ne');
       final releaseNotesElement = sectionElements.firstWhere(
           (elm) => elm.querySelector('.wSaTQd')!.text == 'What\'s New',
@@ -199,9 +192,12 @@ extension PlayStoreResults on PlayStoreSearchAPI {
   /// release notes, the main app description is used.
   String? redesignedReleaseNotes(Document response) {
     try {
-      return releaseNotesFromDescriptions(
-        response.querySelectorAll('[itemprop="description"]'),
-      );
+      final sectionElements =
+          response.querySelectorAll('[itemprop="description"]');
+
+      final rawReleaseNotes = sectionElements.last;
+      final releaseNotes = multilineReleaseNotes(rawReleaseNotes);
+      return releaseNotes;
     } catch (e) {
       if (debugLogging) {
         print(
@@ -209,14 +205,6 @@ extension PlayStoreResults on PlayStoreSearchAPI {
       }
     }
     return null;
-  }
-
-  /// Returns release notes from the last available Play Store description
-  /// element, which is the localized "What's New" content when present and the
-  /// main app description otherwise.
-  String? releaseNotesFromDescriptions(Iterable<Element> descriptionElements) {
-    if (descriptionElements.isEmpty) return null;
-    return multilineReleaseNotes(descriptionElements.last);
   }
 
   String? multilineReleaseNotes(Element rawReleaseNotes) {

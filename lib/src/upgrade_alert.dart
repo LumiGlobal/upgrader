@@ -61,32 +61,29 @@ class UpgradeAlert extends StatefulWidget {
   /// Called to determine if the dialog blocks the current route from being popped.
   final BoolCallback? shouldPopScope;
 
-  /// Hide or show Prompt label on the dialog (default: true)
+  /// Hide or show Prompt label on dialog (default: true)
   final bool showPrompt;
 
-  /// Hide or show Ignore button on the dialog (default: true)
+  /// Hide or show Ignore button on dialog (default: true)
   final bool showIgnore;
 
-  /// Hide or show Later button on the dialog (default: true)
+  /// Hide or show Later button on dialog (default: true)
   final bool showLater;
 
-  /// Hide or show release notes on the dialog (default: true)
+  /// Hide or show release notes (default: true)
   final bool showReleaseNotes;
 
   /// The text style for the cupertino dialog buttons. Used only for
   /// [UpgradeDialogStyle.cupertino]. Optional.
   final TextStyle? cupertinoButtonTextStyle;
 
-  /// The [Key] assigned to the dialog when it is shown. Optional.
+  /// The [Key] assigned to the dialog when it is shown.
   final GlobalKey? dialogKey;
 
-  /// A [GlobalKey] for the [NavigatorState] used when showing the upgrade dialog.
-  /// Provide this when using the Router architecture (e.g. with [RouterDelegate])
-  /// so that the correct context is used for navigation.
+  /// For use by the Router architecture as part of the RouterDelegate.
   final GlobalKey<NavigatorState>? navigatorKey;
 
-  /// The [child] widget displayed behind the upgrade dialog. If null, a
-  /// [SizedBox.shrink] is used.
+  /// The [child] contained by the widget.
   final Widget? child;
 
   final bool isDark;

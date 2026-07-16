@@ -40,7 +40,6 @@ class UpgradeCard extends StatefulWidget {
   final EdgeInsetsGeometry? margin;
 
   /// An optional maximum number of lines for the text to span, wrapping if necessary.
-  /// Defaults to 15.
   final int? maxLines;
 
   /// Called when the ignore button is tapped or otherwise activated.
@@ -54,19 +53,19 @@ class UpgradeCard extends StatefulWidget {
   /// Return false when the default behavior should not execute.
   final BoolCallback? onUpdate;
 
-  /// How visual overflow should be handled. Defaults to [TextOverflow.ellipsis].
+  /// How visual overflow should be handled.
   final TextOverflow? overflow;
 
-  /// Hide or show Prompt label on the card (default: true)
+  /// Hide or show Prompt label on dialog (default: true)
   final bool showPrompt;
 
-  /// Hide or show Ignore button on the card (default: true)
+  /// Hide or show Ignore button on dialog (default: true)
   final bool showIgnore;
 
-  /// Hide or show Later button on the card (default: true)
+  /// Hide or show Later button on dialog (default: true)
   final bool showLater;
 
-  /// Hide or show release notes on the card (default: true)
+  /// Hide or show release notes (default: true)
   final bool showReleaseNotes;
 
   @override

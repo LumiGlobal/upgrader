@@ -23,7 +23,6 @@ class UpgraderState {
     this.messages,
     this.minAppVersion,
     this.packageInfo,
-    this.showOnlyMandatoryUpdates = false,
     required this.upgraderOS,
     this.versionInfo,
   });
@@ -64,11 +63,6 @@ class UpgraderState {
   /// The app package metadata information.
   final PackageInfo? packageInfo;
 
-  /// When `true`, the upgrade prompt is only displayed when the installed
-  /// version is below the minimum supported version (i.e. a mandatory update).
-  /// Optional updates are suppressed. Defaults to `false`.
-  final bool showOnlyMandatoryUpdates;
-
   /// Provides information on which OS this code is running on, and can be
   /// replaced during testing.
   final UpgraderOS upgraderOS;
@@ -89,7 +83,6 @@ class UpgraderState {
     UpgraderMessages? messages,
     Version? minAppVersion,
     PackageInfo? packageInfo,
-    bool? showOnlyMandatoryUpdates,
     UpgraderOS? upgraderOS,
     UpgraderVersionInfo? versionInfo,
   }) {
@@ -106,8 +99,6 @@ class UpgraderState {
       messages: messages ?? this.messages,
       minAppVersion: minAppVersion ?? this.minAppVersion,
       packageInfo: packageInfo ?? this.packageInfo,
-      showOnlyMandatoryUpdates:
-          showOnlyMandatoryUpdates ?? this.showOnlyMandatoryUpdates,
       upgraderOS: upgraderOS ?? this.upgraderOS,
       versionInfo: versionInfo ?? this.versionInfo,
     );
@@ -137,7 +128,6 @@ class UpgraderState {
       messages: messages == true ? null : this.messages,
       minAppVersion: minAppVersion == true ? null : this.minAppVersion,
       packageInfo: packageInfo == true ? null : this.packageInfo,
-      showOnlyMandatoryUpdates: showOnlyMandatoryUpdates,
       upgraderOS: upgraderOS,
       versionInfo: versionInfo == true ? null : this.versionInfo,
     );

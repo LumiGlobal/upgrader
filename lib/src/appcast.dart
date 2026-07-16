@@ -30,15 +30,11 @@ class Appcast {
   /// The operating system version.
   final Version osVersion;
 
-  /// The current app version, used to check [AppcastItem.minimumUpdateVersion].
-  final Version? currentAppVersion;
-
   Appcast(
       {http.Client? client,
       this.clientHeaders,
       UpgraderOS? upgraderOS,
-      required this.osVersion,
-      this.currentAppVersion})
+      required this.osVersion})
       : client = client ?? http.Client(),
         upgraderOS = upgraderOS ?? UpgraderOS();
 
@@ -54,9 +50,7 @@ class Appcast {
     AppcastItem? bestItem;
     items!.forEach((AppcastItem item) {
       if (item.hostSupportsItem(
-              osVersion: osVersion,
-              currentPlatform: upgraderOS.current,
-              currentAppVersion: currentAppVersion) &&
+              osVersion: osVersion, currentPlatform: upgraderOS.current) &&
           item.isCriticalUpdate) {
         if (bestItem == null) {
           bestItem = item;
@@ -86,9 +80,7 @@ class Appcast {
     AppcastItem? bestItem;
     items!.forEach((AppcastItem item) {
       if (item.hostSupportsItem(
-          osVersion: osVersion,
-          currentPlatform: upgraderOS.current,
-          currentAppVersion: currentAppVersion)) {
+          osVersion: osVersion, currentPlatform: upgraderOS.current)) {
         if (bestItem == null) {
           bestItem = item;
         } else {
@@ -148,10 +140,8 @@ class Appcast {
         String? itemDescription;
         String? dateString;
         String? fileURL;
-        String? edSignature;
         String? maximumSystemVersion;
         String? minimumSystemVersion;
-        String? minimumUpdateVersion;
         String? osString;
         String? releaseNotesLink;
         final tags = <String>[];
@@ -177,18 +167,12 @@ class Appcast {
                 } else if (attribute.name.toString() ==
                     AppcastConstants.AttributeURL) {
                   fileURL = attribute.value;
-                } else if (attribute.name.toString() ==
-                    AppcastConstants.AttributeEDSignature) {
-                  edSignature = attribute.value;
                 }
               });
             } else if (name == AppcastConstants.ElementMaximumSystemVersion) {
               maximumSystemVersion = childNode.innerText;
             } else if (name == AppcastConstants.ElementMinimumSystemVersion) {
               minimumSystemVersion = childNode.innerText;
-            } else if (name == AppcastConstants.ElementMinimumUpdateVersion) {
-              final text = childNode.innerText.trim();
-              minimumUpdateVersion = text.isEmpty ? null : text;
             } else if (name == AppcastConstants.ElementPubDate) {
               dateString = childNode.innerText;
             } else if (name == AppcastConstants.ElementReleaseNotesLink) {
@@ -223,12 +207,10 @@ class Appcast {
           dateString: dateString,
           maximumSystemVersion: maximumSystemVersion,
           minimumSystemVersion: minimumSystemVersion,
-          minimumUpdateVersion: minimumUpdateVersion,
           osString: osString,
           releaseNotesURL: releaseNotesLink,
           tags: tags,
           fileURL: fileURL,
-          edSignature: edSignature,
           versionString: newVersion,
         );
         localItems.add(item);
@@ -250,9 +232,7 @@ class AppcastItem {
   final String? releaseNotesURL;
   final String? minimumSystemVersion;
   final String? maximumSystemVersion;
-  final String? minimumUpdateVersion;
   final String? fileURL;
-  final String? edSignature;
   final int? contentLength;
   final String? versionString;
   final String? osString;
@@ -267,9 +247,7 @@ class AppcastItem {
     this.releaseNotesURL,
     this.minimumSystemVersion,
     this.maximumSystemVersion,
-    this.minimumUpdateVersion,
     this.fileURL,
-    this.edSignature,
     this.contentLength,
     this.versionString,
     this.osString,
@@ -285,11 +263,8 @@ class AppcastItem {
       : tags!.contains(AppcastConstants.ElementCriticalUpdate);
 
   /// Does the host support this item? If so is [osVersion] supported?
-  /// Optionally pass [currentAppVersion] to check [minimumUpdateVersion].
   bool hostSupportsItem(
-      {required Version osVersion,
-      required String currentPlatform,
-      Version? currentAppVersion}) {
+      {required Version osVersion, required String currentPlatform}) {
     assert(currentPlatform.isNotEmpty);
     bool supported = true;
     if (osString != null && osString!.isNotEmpty) {
@@ -319,18 +294,6 @@ class AppcastItem {
           print('upgrader: hostSupportsItem invalid minimumSystemVersion: $e');
         }
       }
-      if (supported &&
-          minimumUpdateVersion != null &&
-          currentAppVersion != null) {
-        try {
-          final minUpdateVersion = Version.parse(minimumUpdateVersion!);
-          if (currentAppVersion < minUpdateVersion) {
-            supported = false;
-          }
-        } on Exception catch (e) {
-          print('upgrader: hostSupportsItem invalid minimumUpdateVersion: $e');
-        }
-      }
     }
     return supported;
   }
@@ -353,8 +316,6 @@ class AppcastConstants {
       'sparkle:minimumSystemVersion';
   static const String ElementMaximumSystemVersion =
       'sparkle:maximumSystemVersion';
-  static const String ElementMinimumUpdateVersion =
-      'sparkle:minimumUpdateVersion';
   static const String ElementReleaseNotesLink = 'sparkle:releaseNotesLink';
   static const String ElementTags = 'sparkle:tags';
 

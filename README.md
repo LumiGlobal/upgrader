@@ -52,11 +52,6 @@ Tapping the UPDATE NOW button takes the user to the App Store (iOS) or Google Pl
 Just wrap your home widget in the `UpgradeAlert` widget, and it will handle the rest. Make sure `UpgradeAlert`
 is below `MaterialApp` in the widget tree.
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-}
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -65,11 +60,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Upgrader Example',
       home: UpgradeAlert(
-        child: Scaffold(
-          appBar: AppBar(title: const Text('Upgrader Example')),
-          body: const Center(child: Text('Checking...')),
-        ),
-      ),
+          child: Scaffold(
+        appBar: AppBar(title: Text('Upgrader Example')),
+        body: Center(child: Text('Checking...')),
+      )),
     );
   }
 }
@@ -145,11 +139,11 @@ Here are the custom parameters for `UpgradeAlert`:
 Here are the custom parameters for `UpgradeCard`:
 
 * margin: The empty space that surrounds the card, defaults to ```null```
-* maxLines: An optional maximum number of lines for the text to span, wrapping if necessary, defaults to ```15```
+* maxLines: An optional maximum number of lines for the text to span, wrapping if necessary, defaults to ```null```
 * onIgnore: called when the ignore button is tapped, defaults to ```null```
 * onLater: called when the later button is tapped, defaults to ```null```
 * onUpdate: called when the update button is tapped, defaults to ```null```
-* overflow: How visual overflow should be handled, defaults to ```TextOverflow.ellipsis```
+* overflow: How visual overflow should be handled, defaults to ```null```
 * showPrompt: hide or show Prompt label on dialog, which defaults to ```true```
 * showIgnore: hide or show Ignore button, which defaults to ```true```
 * showLater: hide or show Later button, which defaults to ```true```
@@ -168,6 +162,7 @@ The `Upgrader` class can be customized by setting parameters in the constructor,
 * messages: optional localized messages used for display in `upgrader`
 * minAppVersion: the minimum app version supported by this app. Earlier versions of this app will be forced to update to the current version. It should be a valid version string like this: ```2.0.13```. Overrides any minimum app version from UpgraderStore. Defaults to ```null```.
 * storeController: a controller that provides the store details for each platform, defaults to `UpgraderStoreController()`.
+* upgraderDevice: an abstraction of the device_info details which is used for the OS version, defaults to `UpgraderDevice()`.
 * upgraderOS: information on which OS this code is running on, defaults to `UpgraderOS()`.
 * willDisplayUpgrade: called when ```upgrader``` determines that an upgrade may
 or may not be displayed, defaults to ```null```
@@ -175,8 +170,8 @@ or may not be displayed, defaults to ```null```
 The  `UpgraderStoreController` class is a controller that provides the store details
 for each platform.
 * onAndroid: defaults to `UpgraderPlayStore()` that extends `UpgraderStore`.
-* onFuchsia: defaults to `null`.
-* oniOS: defaults to `UpgraderAppStore()` that extends `UpgraderStore`.
+* onFuchsia: defaults to `UpgraderAppStore()` that extends `UpgraderStore`.
+* oniOS: defaults to `null`.
 * onLinux: defaults to `null`.
 * onMacOS: defaults to `null`.
 * onWeb: defaults to `null`.
@@ -184,12 +179,11 @@ for each platform.
 
 To change the `UpgraderStore` for a platform, replace the platform with a
 different store. Here is an example of using an Appcast on iOS.
-```dart
-const appcastURL = 'https://raw.githubusercontent.com/larryaasen/upgrader/main/test/testappcast.xml';
+```
 final upgrader = Upgrader(
   storeController: UpgraderStoreController(
     onAndroid: () => UpgraderPlayStore(),
-    oniOS: () => UpgraderAppcastStore(appcastURL: appcastURL, osVersion: Version(0, 0, 0)),
+    oniOS: () => UpgraderAppcastStore(appcastURL: appcastURL, osVersion: osVersion),
   ),
 );
 ```
@@ -249,7 +243,7 @@ check out the [example/lib/main_gorouter.dart](example/lib/main_gorouter.dart) e
       builder: (context, child) {
         return UpgradeAlert(
           navigatorKey: routerConfig.routerDelegate.navigatorKey,
-          child: child ?? const Text('child'),
+          child: child ?? Text('child'),
         );
       },
     );
@@ -286,7 +280,7 @@ Example:
 When using the ```UpgradeAlert``` widget, the Android back button will not
 dismiss the alert dialog by default. To allow the back button to dismiss the
 dialog, use ```shouldPopScope``` and return true like this:
-```dart
+```
 UpgradeAlert(shouldPopScope: () => true);
 ```
 
@@ -302,9 +296,6 @@ On Android, the `upgrader` package uses the system locale to determine the count
 ## Android Language Code
 
 Android description and release notes language default to `en`.
-Set `languageCode` on `Upgrader` to request the Google Play Store listing,
-description, and release notes in that language when a localized store page is
-available.
 
 ## Limitations
 These widgets work on both Android and iOS. When running on Android the Google
@@ -342,41 +333,27 @@ The class [UpgraderAppcastStore](lib/src/upgrade_store_controller.dart), in this
 Flutter package, is used by `upgrader` to download app details from an appcast.
 
 ### Appcast Example
-This is an Appcast example for Android and iOS.
+This is an Appcast example for Android.
 ```dart
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-}
+static const appcastURL =
+    'https://raw.githubusercontent.com/larryaasen/upgrader/main/test/testappcast.xml';
+final upgrader = Upgrader(
+  storeController: UpgraderStoreController(
+    onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL, osVersion: osVersion),
+  ),
+);
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  static const appcastURL =
-      'https://raw.githubusercontent.com/larryaasen/upgrader/main/test/testappcast.xml';
-
-  // Pass the actual OS version for accurate Appcast item filtering.
-  // See example/lib/main_appcast.dart for how to retrieve the OS version
-  // using the device_info_plus package.
-  static final upgrader = Upgrader(
-    storeController: UpgraderStoreController(
-      onAndroid: () => UpgraderAppcastStore(appcastURL: appcastURL, osVersion: Version(0, 0, 0)),
-      oniOS: () => UpgraderAppcastStore(appcastURL: appcastURL, osVersion: Version(0, 0, 0)),
-    ),
+@override
+Widget build(BuildContext context) {
+  return MaterialApp(
+    title: 'Upgrader Example',
+    home: Scaffold(
+        appBar: AppBar(title: Text('Upgrader Appcast Example')),
+        body: UpgradeAlert(
+          upgrader: upgrader,
+          child: Center(child: Text('Checking...')),
+        )),
   );
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Upgrader Example',
-      home: Scaffold(
-          appBar: AppBar(title: const Text('Upgrader Appcast Example')),
-          body: UpgradeAlert(
-            upgrader: upgrader,
-            child: const Center(child: Text('Checking...')),
-          )),
-    );
-  }
 }
 ```
 
