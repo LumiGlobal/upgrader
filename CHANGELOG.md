@@ -1,3 +1,11 @@
+## 13.7.0
+
+- [457][553] Fixed barrierDismissible being ignored in UpgradeAlert. (thanks to @mem-5514-tahara)
+
+## 13.6.0
+
+- [517] Added the `checkOnResume` parameter to `Upgrader` that, when `false`, stops the store version check from being made each time the app is resumed from the background.
+
 ## 13.5.0
 
 - Updated the xml dependency constraint from `^6.3.0` to `>=6.3.0 <8.0.0` to support stable xml 7.0.0.
@@ -8,7 +16,7 @@
 
 ## 13.3.0
 
-- [549] Added edSignature parsing from Appcast XML and made bestItem accessible. (thanks to falt008)
+- [549] Added edSignature parsing from Appcast XML and made bestItem accessible. (thanks to @falt008)
 
 ## 13.2.0
 
